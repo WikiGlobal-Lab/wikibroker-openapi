@@ -1,12 +1,7 @@
 import type { InternalAxiosRequestConfig } from "axios";
-import type { HeadersLike, RequestLike } from "../interfaces.js";
-import { newUrlWithFakeBase } from "../utils.js";
-
-export const enum QueryParseMode {
-  Repeat, // https://api.example.com?q1=a&q1=b&q2=c
-  Bracket, // https://api.example.com?q1[]=a&q1[]=b&q2=c
-  Comma, // https://api.example.com?q1=a,b&q2=c
-}
+import type { HeadersLike, RequestLike } from "../common/interfaces.js";
+import { isRequestUsePostMethod, newUrlWithFakeBase } from "../common/utils.js";
+import { QueryParseMode } from "../common/enums.js";
 
 class AxiosRequest implements RequestLike {
   private raw: InternalAxiosRequestConfig<string>;
@@ -32,7 +27,11 @@ class AxiosRequest implements RequestLike {
   }
   public get data() {
     return new Promise<string>((resolve) => {
-      resolve(this.method.toUpperCase() !== "POST" ? "" : this.raw.data ?? "");
+      if (isRequestUsePostMethod(this.method)) {
+        resolve(this.raw.data ?? "");
+      } else {
+        resolve("");
+      }
     });
   }
   public get method() {

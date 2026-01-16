@@ -1,10 +1,7 @@
-import type { RequestLike } from "./interfaces.js";
-import {
-  hexEncodeToString,
-  hmacSha256,
-  newUrlWithFakeBase,
-  sha256Hash,
-} from "./utils.js";
+import type { RequestLike } from "./common/interfaces.js";
+import { hmacSha256, sha256Hash } from "./common/hash.js";
+import { hexEncodeToString, newUrlWithFakeBase } from "./common/utils.js";
+import { CustomHeaders } from "./common/enums.js";
 
 export async function generateSignature(key: string, message: string) {
   const hash = await hmacSha256(key, message);
@@ -15,9 +12,9 @@ export async function generateCanonicalString(req: RequestLike) {
   const method = req.method.toUpperCase();
   const path = newUrlWithFakeBase(req.url).pathname;
   const canonicalQuery = buildCanonicalQuery(req);
-  const apiKey = req.headers.get("X-Api-Key");
-  const timestamp = req.headers.get("X-Timestamp");
-  const nonce = req.headers.get("X-Nonce");
+  const apiKey = req.headers.get(CustomHeaders.ApiKey);
+  const timestamp = req.headers.get(CustomHeaders.Timestamp);
+  const nonce = req.headers.get(CustomHeaders.Nonce);
   const bodyHash = await calculateBodyHash(req);
   return [
     method,

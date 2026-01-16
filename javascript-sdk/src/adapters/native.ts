@@ -1,4 +1,5 @@
-import type { HeadersLike, RequestLike } from "../interfaces.js";
+import type { HeadersLike, RequestLike } from "../common/interfaces.js";
+import { isRequestUsePostMethod } from "../common/utils.js";
 
 class NativeRequest implements RequestLike {
   private raw: Request;
@@ -11,12 +12,12 @@ class NativeRequest implements RequestLike {
     };
   }
   public get data() {
-    if (this.method.toUpperCase() !== "POST") {
-      return new Promise<string>((resolve) => {
-        resolve("");
-      });
+    if (isRequestUsePostMethod(this.method)) {
+      return this.raw.clone().text();
     }
-    return this.raw.clone().text();
+    return new Promise<string>((resolve) => {
+      resolve("");
+    });
   }
   public get method() {
     return this.raw.method;
