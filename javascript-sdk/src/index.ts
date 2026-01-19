@@ -7,7 +7,7 @@ export function addXHeaders(
   headers: HeadersLike,
   apiKey: UUID,
   timestamp: Date,
-  nonce: UUID
+  nonce: UUID,
 ) {
   headers.set(CustomHeaders.ApiKey, apiKey);
   headers.set(CustomHeaders.Timestamp, timestamp.getTime().toString());
@@ -16,7 +16,6 @@ export function addXHeaders(
 
 export async function sign(req: RequestLike, key: string) {
   const canonicalString = await generateCanonicalString(req);
-  console.log("canonical string = ", canonicalString);
   const signature = await generateSignature(key, canonicalString);
   req.headers.set(CustomHeaders.Signature, signature);
 }

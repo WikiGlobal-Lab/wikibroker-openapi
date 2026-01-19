@@ -9,14 +9,6 @@ class AxiosRequest implements RequestLike {
   public url: string;
 
   constructor(raw: InternalAxiosRequestConfig<string>, mode: QueryParseMode) {
-    console.log(
-      "data = ",
-      raw.data,
-      "url = ",
-      raw.url,
-      "params = ",
-      raw.params,
-    );
     this.raw = raw;
     this.headers = {
       set: (field: string, value: string) => {
