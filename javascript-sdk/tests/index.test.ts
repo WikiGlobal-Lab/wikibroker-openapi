@@ -1,5 +1,11 @@
 import { expect, test, describe } from "vitest";
-import { addXHeaders, loadAxios, loadNative, sign } from "../src/index.js";
+import {
+  addXHeaders,
+  CustomHeaders,
+  loadAxios,
+  loadNative,
+  sign,
+} from "../src/index.js";
 import type { UUID } from "crypto";
 import { AxiosHeaders } from "axios";
 
@@ -21,7 +27,7 @@ describe("sign", () => {
     const req = loadNative(raw);
     addXHeaders(req.headers, apiKey, timestamp, nonce);
     sign(req, apiSecret).then(() =>
-      expect(req.headers.get("X-Signature")).toBe(expectedSignature)
+      expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature),
     );
   });
 
@@ -35,7 +41,7 @@ describe("sign", () => {
     const req = loadAxios(raw);
     addXHeaders(req.headers, apiKey, timestamp, nonce);
     sign(req, apiSecret).then(() =>
-      expect(req.headers.get("X-Signature")).toBe(expectedSignature)
+      expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature),
     );
   });
 
@@ -49,7 +55,7 @@ describe("sign", () => {
     const req = loadAxios(raw, JSON.stringify);
     addXHeaders(req.headers, apiKey, timestamp, nonce);
     sign(req, apiSecret).then(() =>
-      expect(req.headers.get("X-Signature")).toBe(expectedSignature)
+      expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature),
     );
   });
 });
