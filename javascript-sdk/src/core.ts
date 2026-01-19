@@ -30,7 +30,7 @@ export async function generateCanonicalString(req: RequestLike) {
 async function calculateBodyHash(req: RequestLike) {
   const body = await req.data;
   const hash = await sha256Hash(
-    typeof body === "string" ? body : JSON.stringify(body)
+    typeof body === "string" ? body : JSON.stringify(body),
   );
   return hexEncodeToString(hash);
 }
@@ -54,9 +54,9 @@ function buildCanonicalQuery(req: RequestLike) {
   const parts = Object.entries(groups);
   parts.sort((a, b) => (a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0));
   return parts
-    .map((item) => {
+    .flatMap((item) => {
       const [key, values] = item;
-      return values.map((value) => `${key}=${value}`).join("&");
+      return values.map((value) => `${key}=${value}`);
     })
     .join("&");
 }
