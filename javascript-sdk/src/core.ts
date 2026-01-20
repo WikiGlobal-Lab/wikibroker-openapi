@@ -1,6 +1,10 @@
 import type { RequestLike } from "./common/interfaces.js";
 import { hmacSha256, sha256Hash } from "./common/hash.js";
-import { hexEncodeToString, newUrlWithFakeBase } from "./common/utils.js";
+import {
+  hexEncodeToString,
+  isRequestUsePostMethod,
+  newUrlWithFakeBase,
+} from "./common/utils.js";
 import { CustomHeaders } from "./common/enums.js";
 
 export async function generateSignature(key: string, message: string) {
@@ -28,7 +32,7 @@ export async function generateCanonicalString(req: RequestLike) {
 }
 
 async function calculateBodyHash(req: RequestLike) {
-  const body = await req.data;
+  const body = isRequestUsePostMethod(req.method) ? await req.data : "";
   const hash = await sha256Hash(
     typeof body === "string" ? body : JSON.stringify(body),
   );
