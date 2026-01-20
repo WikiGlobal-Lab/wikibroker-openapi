@@ -21,9 +21,9 @@ func AddXHeaders(
 	if _, err := uuid.Parse(nonce); err != nil {
 		return err
 	}
-	headers.Set(common.CustomHeaderApiKey, apiKey)
-	headers.Set(common.CustomHeaderTimestamp, strconv.FormatInt(timestamp.UnixMilli(), 10))
-	headers.Set(common.CustomHeaderNonce, nonce)
+	headers.Set(common.CustomHeaderApiKey.String(), apiKey)
+	headers.Set(common.CustomHeaderTimestamp.String(), strconv.FormatInt(timestamp.UnixMilli(), 10))
+	headers.Set(common.CustomHeaderNonce.String(), nonce)
 	return nil
 }
 
@@ -33,7 +33,7 @@ func Sign(req *http.Request, key string) error {
 		return err
 	}
 	signature := generateSignature(key, canonicalString)
-	req.Header.Add(common.CustomHeaderSignature, signature)
+	req.Header.Add(common.CustomHeaderSignature.String(), signature)
 	return nil
 }
 

@@ -30,6 +30,6 @@ func TestSign(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
 		assert.Nil(t, Sign(req, apiSecret))
-		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature))
+		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
 	})
 }

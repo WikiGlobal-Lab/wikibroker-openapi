@@ -1,10 +1,16 @@
 package common
 
+type CustomHeaders string
+
+func (h CustomHeaders) String() string {
+	return string(h)
+}
+
 const (
-	CustomHeaderApiKey    = "X-Api-Key"
-	CustomHeaderTimestamp = "X-Timestamp"
-	CustomHeaderNonce     = "X-Nonce"
-	CustomHeaderSignature = "X-Signature"
+	CustomHeaderApiKey    CustomHeaders = "X-Api-Key"
+	CustomHeaderTimestamp CustomHeaders = "X-Timestamp"
+	CustomHeaderNonce     CustomHeaders = "X-Nonce"
+	CustomHeaderSignature CustomHeaders = "X-Signature"
 )
 
 type QueryParseMode int

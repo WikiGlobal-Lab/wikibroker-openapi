@@ -21,9 +21,9 @@ func generateCanonicalString(req *http.Request) (string, error) {
 	method := strings.ToUpper(req.Method)
 	path := req.URL.Path
 	canonicalQuery := buildCanonicalQuery(req)
-	apiKey := req.Header.Get(common.CustomHeaderApiKey)
-	timestamp := req.Header.Get(common.CustomHeaderTimestamp)
-	nonce := req.Header.Get(common.CustomHeaderNonce)
+	apiKey := req.Header.Get(common.CustomHeaderApiKey.String())
+	timestamp := req.Header.Get(common.CustomHeaderTimestamp.String())
+	nonce := req.Header.Get(common.CustomHeaderNonce.String())
 	bodyHash, err := calculateBodyHash(req)
 	if err != nil {
 		return "", err
