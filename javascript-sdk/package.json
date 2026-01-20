@@ -1,6 +1,6 @@
 {
   "name": "wikibroker-openapi-sdk",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "description": "WikiBroker OpenAPI SDK",
   "license": "MIT",
   "author": "auston <auston@wikiglobal.com>",
