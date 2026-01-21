@@ -1,4 +1,4 @@
-import { randomUUID, type UUID } from "crypto";
+import type { UUID } from "crypto";
 import type { HeadersLike, RequestLike } from "./common/interfaces.js";
 import { generateCanonicalString, generateSignature } from "./core.js";
 import { CustomHeaders, QueryParseMode } from "./common/enums.js";
