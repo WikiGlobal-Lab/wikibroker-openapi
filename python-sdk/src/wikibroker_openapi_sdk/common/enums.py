@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 
-class CustomHeaders(Enum):
+class CustomHeaders(str, Enum):
     API_KEY = "X-Api-Key"
     TIMESTAMP = "X-Timestamp"
     NONCE = "X-Nonce"

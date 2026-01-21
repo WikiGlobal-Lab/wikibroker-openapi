@@ -6,7 +6,7 @@ from wikibroker_openapi_sdk.common.enums import CustomHeaders
 from requests import Request
 
 
-class Test:
+class TestApi:
     base_url = "https://api.example.com"
     path = "test?q1=a&q2=b&q1=c"
     body = '{"key":"value"}'
@@ -32,4 +32,4 @@ class Test:
             nonce=self.nonce,
         )
         sign(req, self.api_secret)
-        assert req.headers[CustomHeaders.SIGNATURE.value] == self.expected_signature
+        assert req.headers[CustomHeaders.SIGNATURE] == self.expected_signature
