@@ -24,7 +24,8 @@ class TestApi:
         return f"{self.base_url}/{self.path}"
 
     def test_requests(self):
-        req = load(Request(method=self.method, url=self.url, data=self.body).prepare())
+        raw = Request(method=self.method, url=self.url, data=self.body).prepare()
+        req = load(raw)
         add_x_headers(
             headers=req.headers,
             api_key=self.api_key,
@@ -32,4 +33,4 @@ class TestApi:
             nonce=self.nonce,
         )
         sign(req, self.api_secret)
-        assert req.headers[CustomHeaders.SIGNATURE] == self.expected_signature
+        assert req.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature

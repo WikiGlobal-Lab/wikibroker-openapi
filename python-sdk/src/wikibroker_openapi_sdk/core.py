@@ -20,9 +20,9 @@ def generate_canonical_string(req: Request) -> str:
     method = req.method.upper()
     path = urlparse(req.url).path
     canonical_query = build_canonical_query(req)
-    api_key = req.headers[CustomHeaders.API_KEY]
-    timestamp = req.headers[CustomHeaders.TIMESTAMP]
-    nonce = req.headers[CustomHeaders.NONCE]
+    api_key = req.headers[str(CustomHeaders.API_KEY)]
+    timestamp = req.headers[str(CustomHeaders.TIMESTAMP)]
+    nonce = req.headers[str(CustomHeaders.NONCE)]
     body_hash = calculate_body_hash(req)
     return "\n".join(
         [

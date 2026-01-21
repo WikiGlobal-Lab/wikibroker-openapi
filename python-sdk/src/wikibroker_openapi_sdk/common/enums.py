@@ -1,11 +1,14 @@
 from enum import Enum, auto
 
 
-class CustomHeaders(str, Enum):
+class CustomHeaders(Enum):
     API_KEY = "X-Api-Key"
     TIMESTAMP = "X-Timestamp"
     NONCE = "X-Nonce"
     SIGNATURE = "X-Signature"
+
+    def __str__(self):
+        return self.value
 
 
 class QueryParseMode(Enum):

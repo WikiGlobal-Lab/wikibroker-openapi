@@ -9,15 +9,15 @@ from datetime import datetime
 def add_x_headers(
     headers: Headers, api_key: UUID, timestamp: datetime, nonce: UUID
 ) -> None:
-    headers[CustomHeaders.API_KEY] = str(api_key)
-    headers[CustomHeaders.TIMESTAMP] = str(int(timestamp.timestamp() * 1000))
-    headers[CustomHeaders.NONCE] = str(nonce)
+    headers[str(CustomHeaders.API_KEY)] = str(api_key)
+    headers[str(CustomHeaders.TIMESTAMP)] = str(int(timestamp.timestamp() * 1000))
+    headers[str(CustomHeaders.NONCE)] = str(nonce)
 
 
 def sign(req: Request, key: str) -> None:
     canonical_string = generate_canonical_string(req)
     signature = generate_signature(key, canonical_string)
-    req.headers[CustomHeaders.SIGNATURE] = signature
+    req.headers[str(CustomHeaders.SIGNATURE)] = signature
 
 
 def build_requests_auth(api_key: str, api_secret: str):
