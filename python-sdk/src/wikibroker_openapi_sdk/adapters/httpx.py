@@ -1,33 +1,30 @@
+import httpx
 from typing import Callable
-from requests import PreparedRequest
-from requests.auth import AuthBase
-from ..common.types import Request, Headers
+from ..common.types import Headers, Request
 from ..common.utils import DictProxy
 from uuid import UUID
 from datetime import datetime
 
 
-class RequestsRequest:
-    def __init__(self, raw: PreparedRequest):
+class HttpxRequest:
+    def __init__(self, raw: httpx.Request):
         self.raw = raw
         self.headers: Headers = DictProxy(raw.headers)
-        self.method = raw.method or ""
-        self.url = raw.url or ""
+        self.method = raw.method
+        self.url = str(raw.url)
 
     @property
     def data(self) -> bytes:
-        if isinstance(self.raw.body, str):
-            return self.raw.body.encode("utf-8")
-        if isinstance(self.raw.body, bytes):
-            return self.raw.body
-        return "".encode("utf-8")
+        return self.raw.content
 
 
-def load(raw: PreparedRequest) -> Request:
-    return RequestsRequest(raw)
+def load(raw: httpx.Request) -> Request:
+    return HttpxRequest(raw)
 
 
-class Auth(AuthBase):
+class Auth(httpx.Auth):
+    requires_request_body = True
+
     def __init__(
         self,
         api_key: UUID,
@@ -44,10 +41,10 @@ class Auth(AuthBase):
         self.timestamp_generator = timestamp_generator
         self.id_generator = id_generator
 
-    def __call__(self, r: PreparedRequest):
+    def auth_flow(self, r: httpx.Request):
         req = load(r)
         self.load_headers(
             req.headers, self.api_key, self.timestamp_generator(), self.id_generator()
         )
         self.sign(req, self.api_secret)
-        return r
+        yield r

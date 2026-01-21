@@ -2,8 +2,10 @@ from datetime import datetime
 from uuid import UUID
 from wikibroker_openapi_sdk import add_x_headers, sign
 from wikibroker_openapi_sdk.adapters.requests import Auth as RequestsAuth
+from wikibroker_openapi_sdk.adapters.httpx import Auth as HttpxAuth
 from wikibroker_openapi_sdk.common.enums import CustomHeaders
 from requests import Request
+from httpx import Request as HttpxRequest
 
 
 class TestApi:
@@ -34,4 +36,17 @@ class TestApi:
             id_generator=lambda: self.nonce,
         )
         auth(raw)
+        assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
+
+    def test_httpx(self):
+        raw = HttpxRequest(method=self.method, url=self.url, content=self.body)
+        auth = HttpxAuth(
+            api_key=self.api_key,
+            api_secret=self.api_secret,
+            load_headers=add_x_headers,
+            sign=sign,
+            timestamp_generator=lambda: self.timestamp,
+            id_generator=lambda: self.nonce,
+        )
+        next(auth.auth_flow(raw))
         assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
