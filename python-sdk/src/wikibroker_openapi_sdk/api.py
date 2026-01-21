@@ -1,7 +1,8 @@
 from .common.types import Headers, Request
 from .common.enums import CustomHeaders
 from .core import generate_canonical_string, generate_signature
-from uuid import UUID
+from .adapters.requests import Auth as RequestsAuth
+from uuid import UUID, uuid4
 from datetime import datetime
 
 
@@ -17,3 +18,9 @@ def sign(req: Request, key: str) -> None:
     canonical_string = generate_canonical_string(req)
     signature = generate_signature(key, canonical_string)
     req.headers[CustomHeaders.SIGNATURE] = signature
+
+
+def build_requests_auth(api_key: str, api_secret: str):
+    return RequestsAuth(
+        UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4
+    )

@@ -1,11 +1,13 @@
-from dataclasses import dataclass
+from typing import Protocol
+from collections.abc import MutableMapping
 
-Headers = dict[str, str]
+Headers = MutableMapping[str, str]
 
 
-@dataclass
-class Request:
+class Request(Protocol):
     headers: Headers
     method: str
     url: str
-    data: bytes
+
+    @property
+    def data(self) -> bytes: ...
