@@ -3,9 +3,14 @@ from uuid import UUID
 from wikibroker_openapi_sdk import add_x_headers, sign
 from wikibroker_openapi_sdk.adapters.requests import Auth as RequestsAuth
 from wikibroker_openapi_sdk.adapters.httpx import Auth as HttpxAuth
+from wikibroker_openapi_sdk.adapters.aiohttp import build_auth
 from wikibroker_openapi_sdk.common.enums import CustomHeaders
 from requests import Request
 from httpx import Request as HttpxRequest
+from aiohttp import ClientRequest
+from yarl import URL
+from asyncer import asyncify
+import asyncio
 
 
 class TestApi:
@@ -49,4 +54,18 @@ class TestApi:
             id_generator=lambda: self.nonce,
         )
         next(auth.auth_flow(raw))
+        assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
+
+    def test_aiohttp(self):
+        raw = ClientRequest(method=self.method, url=URL(self.url), data=self.body)
+        m = build_auth(
+            api_key=self.api_key,
+            api_secret=self.api_secret,
+            load_headers=add_x_headers,
+            sign=sign,
+            timestamp_generator=lambda: self.timestamp,
+            id_generator=lambda: self.nonce,
+        )
+
+        asyncio.run(m(raw, asyncify(lambda x: x)))
         assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
