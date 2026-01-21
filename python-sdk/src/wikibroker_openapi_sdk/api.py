@@ -1,8 +1,6 @@
 from .common.types import Headers, Request
 from .common.enums import CustomHeaders
 from .core import generate_canonical_string, generate_signature
-from .adapters.requests import Auth as RequestsAuth
-from .adapters.httpx import Auth as HttpxAuth
 from uuid import UUID, uuid4
 from datetime import datetime
 
@@ -22,12 +20,12 @@ def sign(req: Request, key: str) -> None:
 
 
 def build_requests_auth(api_key: str, api_secret: str):
-    return RequestsAuth(
-        UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4
-    )
+    from .adapters.requests import Auth
+
+    return Auth(UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4)
 
 
 def build_httpx_auth(api_key: str, api_secret: str):
-    return HttpxAuth(
-        UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4
-    )
+    from .adapters.httpx import Auth
+
+    return Auth(UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4)
