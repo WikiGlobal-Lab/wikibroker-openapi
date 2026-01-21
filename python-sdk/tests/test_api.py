@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
-from wikibroker_openapi_sdk.adapters.requests import load
 from wikibroker_openapi_sdk import add_x_headers, sign
+from wikibroker_openapi_sdk.adapters.requests import Auth as RequestsAuth
 from wikibroker_openapi_sdk.common.enums import CustomHeaders
 from requests import Request
 
@@ -25,12 +25,13 @@ class TestApi:
 
     def test_requests(self):
         raw = Request(method=self.method, url=self.url, data=self.body).prepare()
-        req = load(raw)
-        add_x_headers(
-            headers=req.headers,
+        auth = RequestsAuth(
             api_key=self.api_key,
-            timestamp=self.timestamp,
-            nonce=self.nonce,
+            api_secret=self.api_secret,
+            load_headers=add_x_headers,
+            sign=sign,
+            timestamp_generator=lambda: self.timestamp,
+            id_generator=lambda: self.nonce,
         )
-        sign(req, self.api_secret)
-        assert req.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
+        auth(raw)
+        assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
