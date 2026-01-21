@@ -1,7 +1,9 @@
-import type { UUID } from "crypto";
+import { randomUUID, type UUID } from "crypto";
 import type { HeadersLike, RequestLike } from "./common/interfaces.js";
 import { generateCanonicalString, generateSignature } from "./core.js";
-import { CustomHeaders } from "./common/enums.js";
+import { CustomHeaders, QueryParseMode } from "./common/enums.js";
+import { load as loadAxios } from "./adapters/axios.js";
+import type { InternalAxiosRequestConfig } from "axios";
 
 export function addXHeaders(
   headers: HeadersLike,
@@ -21,6 +23,20 @@ export async function sign(req: RequestLike, key: string) {
 }
 
 export { load as loadNative } from "./adapters/native.js";
-export { load as loadAxios } from "./adapters/axios.js";
+export { loadAxios };
 export { QueryParseMode, CustomHeaders } from "./common/enums.js";
 export type { HeadersLike, RequestLike } from "./common/interfaces.js";
+
+export function axiosHook<T>(
+  apiKey: UUID,
+  apiSecret: string,
+  f?: (data: T) => string,
+  mode?: QueryParseMode,
+): (config: InternalAxiosRequestConfig) => Promise<InternalAxiosRequestConfig> {
+  return async (config: InternalAxiosRequestConfig) => {
+    const req = loadAxios(config, f, mode);
+    addXHeaders(req.headers, apiKey, new Date(), crypto.randomUUID());
+    await sign(req, apiSecret);
+    return config;
+  };
+}
