@@ -5,7 +5,7 @@ from .api import (
     build_httpx_auth,
     build_aiohttp_auth,
 )
-from .common.enums import CustomHeaders, QueryParseMode
+from .common.enums import CustomHeaders
 
 __all__ = [
     "add_x_headers",
@@ -14,5 +14,4 @@ __all__ = [
     "build_httpx_auth",
     "build_aiohttp_auth",
     "CustomHeaders",
-    "QueryParseMode",
 ]

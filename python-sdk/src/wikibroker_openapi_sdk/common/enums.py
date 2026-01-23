@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class CustomHeaders(Enum):
@@ -9,9 +9,3 @@ class CustomHeaders(Enum):
 
     def __str__(self):
         return self.value
-
-
-class QueryParseMode(Enum):
-    REPEAT = auto()  # https://api.example.com?q1=a&q1=b&q2=c
-    BRACKET = auto()  # https://api.example.com?q1[]=a&q1[]=b&q2=c
-    COMMA = auto()  # https://api.example.com?q1=a,b&q2=c

@@ -2,24 +2,32 @@ from typing import Callable
 from requests import PreparedRequest
 from requests.auth import AuthBase
 from ..common.types import Request, Headers
-from ..common.utils import DictProxy
 from uuid import UUID
 from datetime import datetime
 
 
 class RequestsRequest:
     def __init__(self, raw: PreparedRequest):
-        self.raw = raw
-        self.headers: Headers = DictProxy(raw.headers)
-        self.method = raw.method or ""
-        self.url = raw.url or ""
+        self._raw = raw
+
+    @property
+    def headers(self) -> Headers:
+        return self._raw.headers
+
+    @property
+    def method(self) -> str:
+        return self._raw.method or ""
+
+    @property
+    def url(self) -> str:
+        return self._raw.url or ""
 
     @property
     def data(self) -> bytes:
-        if isinstance(self.raw.body, str):
-            return self.raw.body.encode("utf-8")
-        if isinstance(self.raw.body, bytes):
-            return self.raw.body
+        if isinstance(self._raw.body, str):
+            return self._raw.body.encode("utf-8")
+        if isinstance(self._raw.body, bytes):
+            return self._raw.body
         return "".encode("utf-8")
 
 

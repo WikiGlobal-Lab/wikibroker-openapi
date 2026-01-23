@@ -15,7 +15,8 @@ import asyncio
 
 class TestApi:
     base_url = "https://api.example.com"
-    path = "test?q1=a&q2=b&q1=c"
+    path = "test"
+    params = dict(q1=["c", "a"], q2=["b"])
     body = '{"key":"value"}'
     method = "POST"
     api_key = UUID("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b")
@@ -31,7 +32,9 @@ class TestApi:
         return f"{self.base_url}/{self.path}"
 
     def test_requests(self):
-        raw = Request(method=self.method, url=self.url, data=self.body).prepare()
+        raw = Request(
+            method=self.method, url=self.url, params=self.params, data=self.body
+        ).prepare()
         auth = RequestsAuth(
             api_key=self.api_key,
             api_secret=self.api_secret,
@@ -44,7 +47,9 @@ class TestApi:
         assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
 
     def test_httpx(self):
-        raw = HttpxRequest(method=self.method, url=self.url, content=self.body)
+        raw = HttpxRequest(
+            method=self.method, url=self.url, params=self.params, content=self.body
+        )
         auth = HttpxAuth(
             api_key=self.api_key,
             api_secret=self.api_secret,
@@ -57,7 +62,9 @@ class TestApi:
         assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature
 
     def test_aiohttp(self):
-        raw = ClientRequest(method=self.method, url=URL(self.url), data=self.body)
+        raw = ClientRequest(
+            method=self.method, url=URL(self.url), params=self.params, data=self.body
+        )
         m = build_auth(
             api_key=self.api_key,
             api_secret=self.api_secret,

@@ -2,21 +2,29 @@ from typing import Callable
 from aiohttp import ClientRequest, ClientHandlerType, ClientResponse
 from asyncer import syncify, asyncify
 from ..common.types import Request, Headers
-from ..common.utils import DictProxy
 from uuid import UUID
 from datetime import datetime
 
 
 class AiohttpRequest:
     def __init__(self, raw: ClientRequest):
-        self.raw = raw
-        self.headers: Headers = DictProxy(raw.headers)
-        self.method = raw.method
-        self.url = str(raw.url)
+        self._raw = raw
+
+    @property
+    def headers(self) -> Headers:
+        return self._raw.headers
+
+    @property
+    def method(self) -> str:
+        return self._raw.method
+
+    @property
+    def url(self) -> str:
+        return str(self._raw.url)
 
     @property
     def data(self) -> bytes:
-        return syncify(self.raw.body.as_bytes)()
+        return syncify(self._raw.body.as_bytes)()
 
 
 def load(raw: ClientRequest) -> Request:

@@ -1,21 +1,29 @@
 import httpx
 from typing import Callable
 from ..common.types import Headers, Request
-from ..common.utils import DictProxy
 from uuid import UUID
 from datetime import datetime
 
 
 class HttpxRequest:
     def __init__(self, raw: httpx.Request):
-        self.raw = raw
-        self.headers: Headers = DictProxy(raw.headers)
-        self.method = raw.method
-        self.url = str(raw.url)
+        self._raw = raw
+
+    @property
+    def headers(self) -> Headers:
+        return self._raw.headers
+
+    @property
+    def method(self) -> str:
+        return self._raw.method
+
+    @property
+    def url(self) -> str:
+        return str(self._raw.url)
 
     @property
     def data(self) -> bytes:
-        return self.raw.content
+        return self._raw.content
 
 
 def load(raw: httpx.Request) -> Request:
