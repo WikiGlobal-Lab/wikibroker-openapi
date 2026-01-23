@@ -7,10 +7,13 @@ import (
 	"fmt"
 
 	"net/http"
+	"net/url"
+
 	"testing"
 	"time"
 
 	"github.com/levigross/grequests/v2"
+	"github.com/parnurzeal/gorequest"
 	"github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
 	"resty.dev/v3"
@@ -18,8 +21,13 @@ import (
 
 func TestSign(t *testing.T) {
 	baseURL := "https://api.example.com"
-	path := "test?q1=a&q2=b&q1=c"
-	url := fmt.Sprintf("%s/%s", baseURL, path)
+	path := "test"
+	query := url.Values{
+		"q1": []string{"c", "a"},
+		"q2": []string{"b"},
+	}
+	apiUrl := fmt.Sprintf("%s/%s", baseURL, path)
+	fullUrl := fmt.Sprintf("%s?%s", apiUrl, query.Encode())
 	data := map[string]any{"key": "value"}
 	body, err := json.Marshal(data)
 	assert.Nil(t, err)
@@ -31,7 +39,7 @@ func TestSign(t *testing.T) {
 	expectedSignature := "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4"
 
 	convey.Convey("native", t, func() {
-		req, err := http.NewRequest(method, url, bytes.NewReader(body))
+		req, err := http.NewRequest(method, fullUrl, bytes.NewReader(body))
 		assert.Nil(t, err)
 		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
 		assert.Nil(t, Sign(req, apiSecret))
@@ -41,8 +49,8 @@ func TestSign(t *testing.T) {
 	convey.Convey("resty", t, func() {
 		client := resty.New()
 		defer assert.Nil(t, client.Close())
-		r := client.R().SetBody(body)
-		r.SetTimeout(1).Execute(method, url)
+		r := client.R().SetBody(body).SetQueryParamsFromValues(query)
+		r.SetTimeout(1).Execute(method, apiUrl)
 		req := r.RawRequest
 		assert.NotNil(t, req)
 		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
@@ -52,7 +60,7 @@ func TestSign(t *testing.T) {
 
 	convey.Convey("grequests", t, func() {
 		grequests.Request(
-			context.TODO(), method, url,
+			context.TODO(), method, fullUrl,
 			grequests.RequestBody(bytes.NewReader(body)),
 			grequests.RequestTimeout(1),
 			grequests.BeforeRequest(func(req *http.Request) error {
@@ -62,5 +70,15 @@ func TestSign(t *testing.T) {
 				return nil
 			}),
 		)
+	})
+
+	convey.Convey("gorequest", t, func() {
+		agent := gorequest.New().CustomMethod(method, apiUrl).Query(query.Encode()).Send(string(body))
+		req, err := agent.MakeRequest()
+		assert.Nil(t, err)
+		assert.NotNil(t, req)
+		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
+		assert.Nil(t, Sign(req, apiSecret))
+		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
 	})
 }
