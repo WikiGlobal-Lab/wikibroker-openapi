@@ -2,14 +2,18 @@ package wikibroker_openapi_sdk
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+
 	"net/http"
 	"testing"
 	"time"
 
+	"github.com/levigross/grequests/v2"
 	"github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
+	"resty.dev/v3"
 )
 
 func TestSign(t *testing.T) {
@@ -25,11 +29,38 @@ func TestSign(t *testing.T) {
 	timestamp := time.UnixMilli(1798115622000)
 	nonce := "4428a206-1afd-4b15-a98d-43e91f49a08d"
 	expectedSignature := "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4"
+
 	convey.Convey("native", t, func() {
 		req, err := http.NewRequest(method, url, bytes.NewReader(body))
 		assert.Nil(t, err)
 		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
 		assert.Nil(t, Sign(req, apiSecret))
 		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
+	})
+
+	convey.Convey("resty", t, func() {
+		client := resty.New()
+		defer assert.Nil(t, client.Close())
+		r := client.R().SetBody(body)
+		r.SetTimeout(1).Execute(method, url)
+		req := r.RawRequest
+		assert.NotNil(t, req)
+		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
+		assert.Nil(t, Sign(req, apiSecret))
+		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
+	})
+
+	convey.Convey("grequests", t, func() {
+		grequests.Request(
+			context.TODO(), method, url,
+			grequests.RequestBody(bytes.NewReader(body)),
+			grequests.RequestTimeout(1),
+			grequests.BeforeRequest(func(req *http.Request) error {
+				assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
+				assert.Nil(t, Sign(req, apiSecret))
+				assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
+				return nil
+			}),
+		)
 	})
 }
