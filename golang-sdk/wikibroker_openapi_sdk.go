@@ -43,9 +43,3 @@ var (
 	CustomHeaderNonce     = common.CustomHeaderNonce
 	CustomHeaderSignature = common.CustomHeaderSignature
 )
-
-var (
-	QueryParseModeRepeat  = common.QueryParseModeRepeat
-	QueryParseModeBracket = common.QueryParseModeBracket
-	QueryParseModeComma   = common.QueryParseModeComma
-)
