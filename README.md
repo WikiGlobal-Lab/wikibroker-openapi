@@ -97,24 +97,28 @@ go get wikibroker_openapi_sdk
 **示例**
 
 `net/http`
+
 ```golang
 import  "wikibroker_openapi_sdk"
 
 ```
 
 `resty`
+
 ```golang
 import  "wikibroker_openapi_sdk"
 
 ```
 
 `grequests`
+
 ```golang
 import  "wikibroker_openapi_sdk"
 
 ```
 
 `gorequest`
+
 ```golang
 import  "wikibroker_openapi_sdk"
 
@@ -124,14 +128,81 @@ import  "wikibroker_openapi_sdk"
 
 **安装**
 
-```bash
+<details>
+<summary>pip</summary>
 
-```
+    pip install ./wikibroker_openapi_sdk-0.1.0a0-py3-none-any.whl
+</details>
+<details>
+<summary>poetry</summary>
+
+    poetry add ./wikibroker_openapi_sdk-0.1.0a0-py3-none-any.whl
+</details>
+<details>
+<summary>uv</summary>
+
+    uv add ./wikibroker_openapi_sdk-0.1.0a0-py3-none-any.whl
+</details>
+<br/>
 
 **示例**
 
-```python
+`requests`
 
+```python
+import requests
+from wikibroker_openapi_sdk import build_requests_auth
+
+api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+auth = build_requests_auth(api_key=api_key, api_secret=api_secret)
+
+requests.post(
+    url="https://api.example.com/test",
+    params={"q1": ["c", "a"], "q2": ["b"]},
+    json={"key": "value"},
+    auth=auth,
+)
+```
+
+`httpx`
+
+```python
+import httpx
+from wikibroker_openapi_sdk import build_httpx_auth
+
+api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+auth = build_httpx_auth(api_key=api_key, api_secret=api_secret)
+
+httpx.post(
+    url="https://api.example.com/test",
+    params={"q1": ["c", "a"], "q2": ["b"]},
+    json={"key": "value"},
+    auth=auth,
+)
+```
+
+`aiohttp`
+
+```python
+import aiohttp
+from wikibroker_openapi_sdk import build_aiohttp_auth
+
+api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+auth = build_aiohttp_auth(api_key=api_key, api_secret=api_secret)
+
+async def send_request():
+    async with aiohttp.ClientSession() as session:
+        await session.post(
+            url="https://api.example.com/test",
+            params={"q1": ["c", "a"], "q2": ["b"]},
+            data={"key": "value"},
+            auth=auth,
+        )
+
+send_request()
 ```
 
 ### 通过API接入
