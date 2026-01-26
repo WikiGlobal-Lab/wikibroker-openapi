@@ -52,20 +52,10 @@ func calculateBodyHash(req *http.Request) (hash string, err error) {
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
-var ignoredQueryKeys = []string{
-	"sign",
-	"signature",
-	"SIGN",
-	"SIGNATURE",
-}
-
 func buildCanonicalQuery(req *http.Request) string {
 	query := req.URL.Query()
 	groups := make(map[string][]string, len(query))
 	for k, v := range query {
-		if slices.Contains(ignoredQueryKeys, k) {
-			continue
-		}
 		validValues := common.Filter(func(x string) bool {
 			return x != ""
 		}, v)

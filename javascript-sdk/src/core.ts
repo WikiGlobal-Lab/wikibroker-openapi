@@ -39,15 +39,10 @@ async function calculateBodyHash(req: RequestLike) {
   return hexEncodeToString(hash);
 }
 
-const ignoredQueryKeys = ["sign", "signature", "SIGN", "SIGNATURE"];
-
 function buildCanonicalQuery(req: RequestLike) {
   const query = newUrlWithFakeBase(req.url).searchParams;
   const groups = {} as Record<string, string[]>;
   for (const k of query.keys()) {
-    if (ignoredQueryKeys.includes(k)) {
-      continue;
-    }
     const validValues = query.getAll(k).filter((x) => x !== "");
     if (validValues.length === 0) {
       continue;

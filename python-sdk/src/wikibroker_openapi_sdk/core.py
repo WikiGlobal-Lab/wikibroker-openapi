@@ -43,18 +43,7 @@ def calculate_body_hash(req: Request) -> str:
     return hashlib.sha256(body).digest().hex()
 
 
-IGNORED_QUERY_KEYS = [
-    "sign",
-    "signature",
-    "SIGN",
-    "SIGNATURE",
-]
-
-
 def build_canonical_query(req: Request) -> str:
-    query = sorted(
-        filter(
-            lambda x: x[0] not in IGNORED_QUERY_KEYS, parse_qsl(urlparse(req.url).query)
-        )
-    )
+    query = parse_qsl(urlparse(req.url).query)
+    query.sort()
     return "&".join(map(lambda x: f"{x[0]}={x[1]}", query))
