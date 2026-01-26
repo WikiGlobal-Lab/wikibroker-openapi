@@ -4,9 +4,13 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"wikibroker_openapi_sdk/adapters"
 	"wikibroker_openapi_sdk/common"
 
 	"github.com/google/uuid"
+	"github.com/levigross/grequests/v2"
+	"github.com/parnurzeal/gorequest"
+	"resty.dev/v3"
 )
 
 func AddXHeaders(
@@ -43,3 +47,19 @@ var (
 	CustomHeaderNonce     = common.CustomHeaderNonce
 	CustomHeaderSignature = common.CustomHeaderSignature
 )
+
+func NewHttpClient(raw adapters.RawHttpClient, apiKey, apiSecret string) *adapters.HttpClient {
+	return adapters.NewHttpClient(raw, apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString)
+}
+
+func NewRestyRequestMiddleware(apiKey, apiSecret string) resty.RequestMiddleware {
+	return adapters.NewRestyRequestMiddleware(apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString)
+}
+
+func GRequestsAuthOption(apiKey, apiSecret string) grequests.Option {
+	return grequests.BeforeRequest(adapters.NewGRequestsHook(apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString))
+}
+
+func LoadGorequestInterceptor(agent *gorequest.SuperAgent, apiKey, apiSecret string) {
+	agent.Client.Transport = adapters.NewGorequestInterceptor(agent.Client.Transport, apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString)
+}
