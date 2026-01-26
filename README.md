@@ -22,25 +22,93 @@ WikiBroker的OpenAPI接口都会校验请求
 
 1. `TypeScript`/`JavaScript`接入
 
-    ```typescript
-    
-    ```
+    1. 安装
+        <details>
+        <summary>npm</summary>
 
-    ```javascript
-    
-    ```
+            npm install ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+        </details>
+        <details>
+        <summary>yarn</summary>
+
+            yarn add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+        </details>
+        <details>
+        <summary>pnpm</summary>
+
+            pnpm add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+        </details>
+
+    2. 示例
+
+        1. `fetch`
+
+            ```javascript
+            import { wrappedFetch } from "wikibroker-openapi-sdk";
+
+            const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+            const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+            const fetch = wrappedFetch(apiKey, apiSecret);
+
+            const req = new Request("https://api.example.com/test?q1=c&q2=b&q1=a", {
+                method: "POST",
+                body: JSON.stringify({
+                    key: "value",
+                }),
+            });
+            fetch(req);
+            ```
+
+        2. `axios`
+
+            ```javascript
+            import { axiosHook } from "wikibroker-openapi-sdk";
+
+            const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+            const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+            axios.interceptors.request.use(axiosHook(apiKey, apiSecret));
+
+            axios.post(
+                "https://api.example.com",
+                {
+                    key: "value",
+                },
+                {
+                    params: {
+                        q1: ["c", "a"],
+                        q2: ["b"],
+                    },
+                },
+            );
+            ```
 
 2. `Golang`接入
 
-    ```golang
-    
-    ```
+    1. 安装
+
+        ```bash
+
+        ```
+
+    2. 示例
+
+        ```golang
+
+        ```
 
 3. `Python`接入
 
-    ```python
+    1. 安装
 
-    ```
+        ```bash
+
+        ```
+
+    2. 示例
+
+        ```python
+
+        ```
 
 ### 通过API接入
 
