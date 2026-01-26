@@ -99,29 +99,84 @@ go get wikibroker_openapi_sdk
 `net/http`
 
 ```golang
-import  "wikibroker_openapi_sdk"
+import sdk "wikibroker_openapi_sdk"
 
+const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+rawClient := &http.Client{}
+client := sdk.NewHttpClient(rawClient, apiKey, apiSecret)
+
+client.Post(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    map[string]any{
+        "key": "value",
+    },
+)
 ```
 
 `resty`
 
 ```golang
-import  "wikibroker_openapi_sdk"
+import sdk "wikibroker_openapi_sdk"
 
+const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+client := resty.New()
+m := sdk.NewRestyRequestMiddleware(apiKey, apiSecret)
+client.AddRequestMiddleware(m)
+
+client.R().SetBody(
+    map[string]any{
+        "key": "value",
+    },
+).SetQueryParamsFromValues(
+    url.Values{
+        "q1": []string{"c", "a"},
+        "q2": []string{"b"},
+    },
+).Post("https://api.example.com/test")
 ```
 
 `grequests`
 
 ```golang
-import  "wikibroker_openapi_sdk"
+import sdk "wikibroker_openapi_sdk"
 
+const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+
+data, _ := json.Marshal(
+    map[string]any{
+        "key": "value",
+    },
+)
+body := grequests.RequestBody(bytes.NewReader(data))
+auth := sdk.GRequestsAuthOption(apiKey, apiSecret)
+grequests.Post(
+    context.TODO(),
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    body,
+    auth,
+)
 ```
 
 `gorequest`
 
 ```golang
-import  "wikibroker_openapi_sdk"
+import sdk "wikibroker_openapi_sdk"
 
+const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+agent := gorequest.New()
+sdk.LoadGorequestInterceptor(agent, apiKey, apiSecret)
+
+data, _ := json.Marshal(
+    map[string]any{
+        "key": "value",
+    },
+)
+body := string(data)
+agent.Post("https://api.example.com/test?q1=c&q2=b&q1=a").Send(body).End()
 ```
 
 #### `Python`接入
