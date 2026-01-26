@@ -4,6 +4,7 @@ import { generateCanonicalString, generateSignature } from "./core.js";
 import { CustomHeaders, QueryParseMode } from "./common/enums.js";
 import { load as loadAxios } from "./adapters/axios.js";
 import type { InternalAxiosRequestConfig } from "axios";
+import { load as loadNative } from "./adapters/native.js";
 
 export function addXHeaders(
   headers: HeadersLike,
@@ -22,8 +23,7 @@ export async function sign(req: RequestLike, key: string) {
   req.headers.set(CustomHeaders.Signature, signature);
 }
 
-export { load as loadNative } from "./adapters/native.js";
-export { loadAxios };
+export { loadAxios, loadNative };
 export { QueryParseMode, CustomHeaders } from "./common/enums.js";
 export type { HeadersLike, RequestLike } from "./common/interfaces.js";
 
@@ -38,5 +38,17 @@ export function axiosHook<T>(
     addXHeaders(req.headers, apiKey, new Date(), crypto.randomUUID());
     await sign(req, apiSecret);
     return config;
+  };
+}
+
+export function wrappedFetch(
+  apiKey: UUID,
+  apiSecret: string,
+): (req: Request) => Promise<Response> {
+  return async (raw: Request) => {
+    const req = loadNative(raw);
+    addXHeaders(req.headers, apiKey, new Date(), crypto.randomUUID());
+    await sign(req, apiSecret);
+    return await fetch(raw);
   };
 }
