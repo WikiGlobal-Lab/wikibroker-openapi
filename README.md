@@ -20,95 +20,119 @@ WikiBroker的OpenAPI接口都会校验请求
 
 根据你使用的编程语言，按需选用本仓库提供的SDK。
 
-1. `TypeScript`/`JavaScript`接入
+#### `TypeScript`/`JavaScript`接入
 
-    1. 安装
-        <details>
-        <summary>npm</summary>
+**安装**
 
-            npm install ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
-        </details>
-        <details>
-        <summary>yarn</summary>
+<details>
+<summary>npm</summary>
 
-            yarn add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
-        </details>
-        <details>
-        <summary>pnpm</summary>
+    npm install ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+</details>
+<details>
+<summary>yarn</summary>
 
-            pnpm add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
-        </details>
+    yarn add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+</details>
+<details>
+<summary>pnpm</summary>
 
-    2. 示例
+    pnpm add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+</details>
+<br/>
 
-        1. `fetch`
+**示例**
 
-            ```javascript
-            import { wrappedFetch } from "wikibroker-openapi-sdk";
+`fetch`
 
-            const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
-            const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
-            const fetch = wrappedFetch(apiKey, apiSecret);
+```javascript
+import { wrappedFetch } from "wikibroker-openapi-sdk";
 
-            const req = new Request("https://api.example.com/test?q1=c&q2=b&q1=a", {
-                method: "POST",
-                body: JSON.stringify({
-                    key: "value",
-                }),
-            });
-            fetch(req);
-            ```
+const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+const fetch = wrappedFetch(apiKey, apiSecret);
 
-        2. `axios`
+const req = new Request("https://api.example.com/test?q1=c&q2=b&q1=a", {
+    method: "POST",
+    body: JSON.stringify({
+        key: "value",
+    }),
+});
+fetch(req);
+```
 
-            ```javascript
-            import { axiosHook } from "wikibroker-openapi-sdk";
+`axios`
 
-            const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
-            const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
-            axios.interceptors.request.use(axiosHook(apiKey, apiSecret));
+```javascript
+import { axiosHook } from "wikibroker-openapi-sdk";
 
-            axios.post(
-                "https://api.example.com",
-                {
-                    key: "value",
-                },
-                {
-                    params: {
-                        q1: ["c", "a"],
-                        q2: ["b"],
-                    },
-                },
-            );
-            ```
+const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+axios.interceptors.request.use(axiosHook(apiKey, apiSecret));
 
-2. `Golang`接入
+axios.post(
+    "https://api.example.com",
+    {
+        key: "value",
+    },
+    {
+        params: {
+            q1: ["c", "a"],
+            q2: ["b"],
+        },
+    },
+);
+```
 
-    1. 安装
+#### `Golang`接入
 
-        ```bash
+**安装**
 
-        ```
+```bash
+tar zxf wikibroker-openapi-go-sdk-0.1.0-alpha.tgz
+go mod edit -replace=wikibroker_openapi_sdk=./wikibroker_openapi_sdk
+go get wikibroker_openapi_sdk
+```
 
-    2. 示例
+**示例**
 
-        ```golang
+`net/http`
+```golang
+import  "wikibroker_openapi_sdk"
 
-        ```
+```
 
-3. `Python`接入
+`resty`
+```golang
+import  "wikibroker_openapi_sdk"
 
-    1. 安装
+```
 
-        ```bash
+`grequests`
+```golang
+import  "wikibroker_openapi_sdk"
 
-        ```
+```
 
-    2. 示例
+`gorequest`
+```golang
+import  "wikibroker_openapi_sdk"
 
-        ```python
+```
 
-        ```
+#### `Python`接入
+
+**安装**
+
+```bash
+
+```
+
+**示例**
+
+```python
+
+```
 
 ### 通过API接入
 
