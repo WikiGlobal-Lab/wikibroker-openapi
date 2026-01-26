@@ -2,6 +2,9 @@
   "name": "wikibroker-openapi-sdk",
   "version": "0.1.0-alpha",
   "description": "WikiBroker OpenAPI SDK",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "license": "MIT",
   "author": "auston <auston@wikiglobal.com>",
   "type": "module",
