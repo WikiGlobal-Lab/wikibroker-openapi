@@ -1,6 +1,8 @@
 package adapters
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 	"net/http"
 	"time"
@@ -53,12 +55,16 @@ func (c *HttpClient) Do(req *http.Request) (resp *http.Response, err error) {
 	return c.RawHttpClient.Do(req)
 }
 
-func (c *HttpClient) Post(url, contentType string, body io.Reader) (resp *http.Response, err error) {
-	req, err := http.NewRequest("POST", url, body)
+func (c *HttpClient) Post(url string, body map[string]any) (resp *http.Response, err error) {
+	data, err := json.Marshal(body)
+	if err != nil {
+		return
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("Content-Type", "application/json")
 	return c.Do(req)
 }
 
