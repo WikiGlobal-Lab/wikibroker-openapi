@@ -208,9 +208,9 @@ agent.Post("https://api.example.com/test?q1=c&q2=b&q1=a").Send(body).End()
 import requests
 from wikibroker_openapi_sdk import build_requests_auth
 
-api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
-api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
-auth = build_requests_auth(api_key=api_key, api_secret=api_secret)
+API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+auth = build_requests_auth(api_key=API_KEY, api_secret=API_SECRET)
 
 requests.post(
     url="https://api.example.com/test",
@@ -226,9 +226,9 @@ requests.post(
 import httpx
 from wikibroker_openapi_sdk import build_httpx_auth
 
-api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
-api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
-auth = build_httpx_auth(api_key=api_key, api_secret=api_secret)
+API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+auth = build_httpx_auth(api_key=API_KEY, api_secret=API_SECRET)
 
 httpx.post(
     url="https://api.example.com/test",
@@ -244,9 +244,9 @@ httpx.post(
 import aiohttp
 from wikibroker_openapi_sdk import build_aiohttp_auth
 
-api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
-api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
-auth = build_aiohttp_auth(api_key=api_key, api_secret=api_secret)
+API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+auth = build_aiohttp_auth(api_key=API_KEY, api_secret=API_SECRET)
 
 async def send_request():
     async with aiohttp.ClientSession() as session:
