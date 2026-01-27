@@ -1,6 +1,6 @@
 .PHONY: build build-js build-go build-py
 
-GO_SDK_VERSION=0.1.0-alpha
+GO_SDK_VERSION=0.1.0
 
 build:
 	@echo "清理已构建SDK包..."
