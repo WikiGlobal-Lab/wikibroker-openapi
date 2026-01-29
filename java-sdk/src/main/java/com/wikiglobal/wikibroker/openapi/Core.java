@@ -3,8 +3,8 @@ package com.wikiglobal.wikibroker.openapi;
 import com.wikiglobal.wikibroker.openapi.common.Hash;
 import com.wikiglobal.wikibroker.openapi.common.Utils;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.RequestsInfo;
 
+import com.wikiglobal.wikibroker.openapi.common.types.RequestReader;
 import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
@@ -33,28 +33,28 @@ public final class Core {
     }
 
     public static @NonNull String generateCanonicalString(
-            @NonNull RequestsInfo req
+            @NonNull RequestReader req
     ) throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException {
-        final var method = req.method().toUpperCase();
-        final var path = new URI(req.url()).toURL().getPath();
+        final var method = req.getMethod().toUpperCase();
+        final var path = new URI(req.getUrl()).toURL().getPath();
         final var canonicalQuery = Core.buildCanonicalQuery(req);
-        final var apiKey = req.headers().get(CustomHeaders.ApiKey.value());
-        final var timestamp = req.headers().get(CustomHeaders.TimeStamp.value());
-        final var nonce = req.headers().get(CustomHeaders.Nonce.value());
+        final var apiKey = req.getHeader(CustomHeaders.ApiKey.value());
+        final var timestamp = req.getHeader(CustomHeaders.TimeStamp.value());
+        final var nonce = req.getHeader(CustomHeaders.Nonce.value());
         final var bodyHash = Core.calculateBodyHash(req);
         return String.join("\n", method, path, canonicalQuery, apiKey, timestamp, nonce, bodyHash);
     }
 
-    private static @NonNull String calculateBodyHash(RequestsInfo req) throws NoSuchAlgorithmException {
-        final var body = Utils.isRequestUsePostMethod(req) ? req.data() : "";
+    private static @NonNull String calculateBodyHash(@NonNull RequestReader req) throws NoSuchAlgorithmException {
+        final var body = Utils.isRequestUsePostMethod(req) ? req.getBody() : "";
         final var hash = Hash.sha256Hash(body);
         return Hex.encodeHexString(hash);
     }
 
-    private static String buildCanonicalQuery(
-            @NonNull RequestsInfo req
+    private static @NonNull String buildCanonicalQuery(
+            @NonNull RequestReader req
     ) throws URISyntaxException, MalformedURLException {
-        final var queryString = new URI(req.url()).toURL().getQuery();
+        final var queryString = new URI(req.getUrl()).toURL().getQuery();
         final var query = Arrays.stream(queryString.split("&"))
                                 .map(pair -> pair.split("="))
                                 .collect(Collectors.groupingBy(
