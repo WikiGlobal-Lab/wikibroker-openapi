@@ -22,12 +22,9 @@ public class WikiBrokerOpenApi {
             @NonNull Instant timestamp,
             @NonNull UUID nonce
     ) {
-        builder.setHeader(CustomHeaders.ApiKey.value(), apiKey.toString());
-        builder.setHeader(
-                CustomHeaders.TimeStamp.value(),
-                String.valueOf(timestamp.toEpochMilli())
-        );
-        builder.setHeader(CustomHeaders.Nonce.value(), nonce.toString());
+        builder.setHeader(CustomHeaders.ApiKey.value(), apiKey.toString())
+               .setHeader(CustomHeaders.TimeStamp.value(), String.valueOf(timestamp.toEpochMilli()))
+               .setHeader(CustomHeaders.Nonce.value(), nonce.toString());
     }
 
     public static <T> void sign(
