@@ -34,6 +34,7 @@
       <version>5.2.1</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Source: https://mvnrepository.com/artifact/org.jspecify/jspecify -->
     <dependency>
       <groupId>org.jspecify</groupId>
       <artifactId>jspecify</artifactId>

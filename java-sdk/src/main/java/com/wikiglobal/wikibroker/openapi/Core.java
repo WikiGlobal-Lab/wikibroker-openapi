@@ -6,7 +6,6 @@ import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 
 import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestReader;
 import org.apache.commons.codec.binary.Hex;
-import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 
 import java.net.MalformedURLException;
@@ -24,7 +23,6 @@ public final class Core {
     private Core() {
     }
 
-    @Contract("_, _ -> new")
     public static @NonNull String generateSignature(
         @NonNull String key,
         @NonNull String message

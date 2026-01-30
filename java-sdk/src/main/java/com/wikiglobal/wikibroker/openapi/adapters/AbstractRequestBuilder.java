@@ -1,6 +1,7 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
 import com.wikiglobal.wikibroker.openapi.common.interfaces.*;
+import org.jspecify.annotations.NonNull;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -48,7 +49,7 @@ public abstract class AbstractRequestBuilder<T> implements RequestOperator<T> {
     }
 
     @Override
-    public final RequestBuilder<T> setMethod(String method) {
+    public final RequestBuilder<T> setMethod(@NonNull String method) {
         this.method = method.toUpperCase();
         return this;
     }
