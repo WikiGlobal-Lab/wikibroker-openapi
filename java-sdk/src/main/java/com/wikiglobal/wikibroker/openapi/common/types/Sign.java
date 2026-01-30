@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+@FunctionalInterface
 public interface Sign<T> {
     void accept(
         RequestOperator<T> req,

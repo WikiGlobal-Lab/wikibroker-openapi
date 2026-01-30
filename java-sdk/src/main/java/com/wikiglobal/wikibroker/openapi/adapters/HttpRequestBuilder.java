@@ -1,11 +1,5 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
-
-import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
-import com.wikiglobal.wikibroker.openapi.common.types.Sign;
-import com.wikiglobal.wikibroker.openapi.common.types.Wrapper;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
+import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
+import com.wikiglobal.wikibroker.openapi.common.types.Sign;
+import com.wikiglobal.wikibroker.openapi.common.types.Wrapper;
 
 public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper<HttpRequest.Builder> {
     private final HttpRequest.Builder raw;
@@ -50,30 +49,35 @@ public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper
         this.idGenerator = idGenerator;
     }
 
+    @Override
     public HttpRequestBuilder setHeader(String name, String value) {
         this.headers.put(name, value);
         this.raw.setHeader(name, this.headers.get(name));
         return this;
     }
 
+    @Override
     public HttpRequestBuilder setMethod(String method) {
         this.method = method.toUpperCase();
         this.raw.method(this.method, HttpRequest.BodyPublishers.noBody());
         return this;
     }
 
+    @Override
     public HttpRequestBuilder setUrl(String url) {
         this.url = url;
         this.raw.uri(URI.create(this.url));
         return this;
     }
 
+    @Override
     public HttpRequestBuilder setBody(String data) {
         this.body = data;
         this.raw.method(this.method, HttpRequest.BodyPublishers.ofString(data));
         return this;
     }
 
+    @Override
     public HttpRequest build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         this.loadHeaders.accept(
             this,
@@ -85,22 +89,27 @@ public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper
         return this.raw.build();
     }
 
+    @Override
     public HttpRequest.Builder raw() {
         return this.raw;
     }
 
+    @Override
     public String getHeader(String name) {
         return this.headers.get(name);
     }
 
+    @Override
     public String getMethod() {
         return this.method;
     }
 
+    @Override
     public String getUrl() {
         return this.url;
     }
 
+    @Override
     public String getBody() {
         return this.body;
     }
