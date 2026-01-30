@@ -3,6 +3,7 @@ package com.wikiglobal.wikibroker.openapi;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder;
+import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 import okhttp3.*;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class OpenApiTest {
     }
 
     private static final String body = "{\"key\":\"value\"}";
-
+    private static final String method = "POST";
 
     private static final UUID apiKey = UUID.fromString("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b");
     private static final String apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
@@ -39,16 +40,16 @@ public class OpenApiTest {
     void testNative() {
         final var raw = HttpRequest.newBuilder();
         final var builder = new HttpRequestBuilder(
-                raw,
-                apiKey,
-                apiSecret,
-                WikiBrokerOpenApi::addXHeaders,
-                WikiBrokerOpenApi::sign,
-                () -> timestamp,
-                () -> nonce
+            raw,
+            apiKey,
+            apiSecret,
+            WikiBrokerOpenApi::addXHeaders,
+            WikiBrokerOpenApi::sign,
+            () -> timestamp,
+            () -> nonce
         );
         try {
-            final var req = builder.setUrl(url()).setMethod("POST").setBody(body).build();
+            final var req = builder.setUrl(url()).setMethod(method).setBody(body).build();
             final var actualSignature = req.headers()
                                            .firstValue(CustomHeaders.Signature.value())
                                            .orElse("");
@@ -68,6 +69,25 @@ public class OpenApiTest {
 
     @Test
     void testOkHttp() {
-        // TODO
+        final var raw = new Request.Builder();
+        final var builder = new OkHttpRequestBuilder(
+            raw,
+            apiKey,
+            apiSecret,
+            WikiBrokerOpenApi::addXHeaders,
+            WikiBrokerOpenApi::sign,
+            () -> timestamp,
+            () -> nonce
+        );
+        try {
+            final var req = builder.setUrl(url()).setMethod(method).setBody(body).build();
+            final var actualSignature = req.header(CustomHeaders.Signature.value());
+            assertEquals(expectedSignature, actualSignature);
+        } catch (MalformedURLException |
+                 URISyntaxException |
+                 NoSuchAlgorithmException |
+                 InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
