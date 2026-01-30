@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class AbstractRequestBuilder<T> implements RequestOperator<T> {
@@ -63,6 +64,12 @@ public abstract class AbstractRequestBuilder<T> implements RequestOperator<T> {
     @Override
     public final RequestBuilder<T> setBody(String body) {
         this.body = body;
+        return this;
+    }
+
+    @Override
+    public final <U> RequestBuilder<T> setBody(U body, @NonNull Function<U, String> serialize) {
+        this.body = serialize.apply(body);
         return this;
     }
 
