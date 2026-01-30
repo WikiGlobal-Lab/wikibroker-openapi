@@ -9,6 +9,8 @@ import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 import okhttp3.*;
 import org.apache.hc.core5.http.ProtocolException;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -23,11 +25,12 @@ public class OpenApiTest {
     private static final String baseURL = "https://api.example.com";
     private static final String path = "test?q1=c&q2=b&q1=a";
 
-    private static String url() {
+    @Contract(pure = true)
+    private static @NonNull String url() {
         return String.format("%s/%s", OpenApiTest.baseURL, OpenApiTest.path);
     }
 
-    private static final String body = JSON.toJSONString(Map.of("key", "value"));
+    private static final Map<String, String> body = Map.of("key", "value");
     private static final String method = "POST";
 
     private static final UUID apiKey = UUID.fromString("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b");
@@ -50,7 +53,10 @@ public class OpenApiTest {
             () -> nonce
         );
         try {
-            final var req = builder.setUrl(url()).setMethod(method).setBody(body).build();
+            final var req = builder.setUrl(url())
+                                   .setMethod(method)
+                                   .setBody(body, JSON::toJSONString)
+                                   .build();
             final var actualSignature = req.headers()
                                            .firstValue(CustomHeaders.Signature.value())
                                            .orElse("");
@@ -74,7 +80,10 @@ public class OpenApiTest {
             () -> nonce
         );
         try {
-            final var req = builder.setUrl(url()).setMethod(method).setBody(body).build();
+            final var req = builder.setUrl(url())
+                                   .setMethod(method)
+                                   .setBody(body, JSON::toJSONString)
+                                   .build();
             final var actualSignature = req.getHeader(CustomHeaders.Signature.value()).getValue();
             assertEquals(expectedSignature, actualSignature);
         } catch (MalformedURLException |
@@ -97,7 +106,10 @@ public class OpenApiTest {
             () -> nonce
         );
         try {
-            final var req = builder.setUrl(url()).setMethod(method).setBody(body).build();
+            final var req = builder.setUrl(url())
+                                   .setMethod(method)
+                                   .setBody(body, JSON::toJSONString)
+                                   .build();
             final var actualSignature = req.header(CustomHeaders.Signature.value());
             assertEquals(expectedSignature, actualSignature);
         } catch (MalformedURLException |
