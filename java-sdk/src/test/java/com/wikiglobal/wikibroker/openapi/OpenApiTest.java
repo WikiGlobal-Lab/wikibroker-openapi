@@ -2,6 +2,7 @@ package com.wikiglobal.wikibroker.openapi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.alibaba.fastjson2.JSON;
 import com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
@@ -14,6 +15,7 @@ import java.net.http.HttpRequest;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 public class OpenApiTest {
@@ -24,7 +26,7 @@ public class OpenApiTest {
         return String.format("%s/%s", OpenApiTest.baseURL, OpenApiTest.path);
     }
 
-    private static final String body = "{\"key\":\"value\"}";
+    private static final String body = JSON.toJSONString(Map.of("key", "value"));
     private static final String method = "POST";
 
     private static final UUID apiKey = UUID.fromString("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b");
