@@ -9,7 +9,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public final class Hash {
+public class Hash {
     private Hash() {
     }
 

@@ -8,14 +8,11 @@ import com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 import okhttp3.*;
-import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ProtocolException;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -44,9 +41,7 @@ public class OpenApiTest {
 
     @Test
     void testNative() {
-        final var raw = HttpRequest.newBuilder();
         final var builder = new HttpRequestBuilder(
-            raw,
             apiKey,
             apiSecret,
             WikiBrokerOpenApi::addXHeaders,
@@ -70,9 +65,7 @@ public class OpenApiTest {
 
     @Test
     void testApache() {
-        final var raw = ClassicRequestBuilder.create(method);
         final var builder = new ApacheHttpRequestBuilder(
-            raw,
             apiKey,
             apiSecret,
             WikiBrokerOpenApi::addXHeaders,
@@ -95,9 +88,7 @@ public class OpenApiTest {
 
     @Test
     void testOkHttp() {
-        final var raw = new Request.Builder();
         final var builder = new OkHttpRequestBuilder(
-            raw,
             apiKey,
             apiSecret,
             WikiBrokerOpenApi::addXHeaders,
