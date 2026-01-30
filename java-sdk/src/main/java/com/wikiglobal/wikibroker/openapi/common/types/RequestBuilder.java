@@ -12,7 +12,7 @@ public interface RequestBuilder<T> {
 
     RequestBuilder<T> setUrl(String url);
 
-    RequestBuilder<T> setBody(String data);
+    RequestBuilder<T> setBody(String body);
 
     T build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException;
 }
