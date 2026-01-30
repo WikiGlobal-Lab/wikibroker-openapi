@@ -1,12 +1,5 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
-import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.Sign;
-import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
-import com.wikiglobal.wikibroker.openapi.common.types.Wrapper;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
+import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
+import com.wikiglobal.wikibroker.openapi.common.types.Sign;
+import com.wikiglobal.wikibroker.openapi.common.types.Wrapper;
+
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class OkHttpRequestBuilder implements RequestOperator<Request>, Wrapper<Request.Builder> {
     private final Request.Builder raw;
@@ -50,30 +51,35 @@ public class OkHttpRequestBuilder implements RequestOperator<Request>, Wrapper<R
         this.idGenerator = idGenerator;
     }
 
+    @Override
     public OkHttpRequestBuilder setHeader(String name, String value) {
         this.headers.put(name, value);
         this.raw.header(name, this.headers.get(name));
         return this;
     }
 
+    @Override
     public OkHttpRequestBuilder setMethod(String method) {
         this.method = method.toUpperCase();
         this.raw.setMethod$okhttp(this.method);
         return this;
     }
 
+    @Override
     public OkHttpRequestBuilder setUrl(String url) {
         this.url = url;
         this.raw.url(this.url);
         return this;
     }
 
+    @Override
     public OkHttpRequestBuilder setBody(String data) {
         this.body = data;
         this.raw.setBody$okhttp(RequestBody.create(this.body.getBytes(StandardCharsets.UTF_8)));
         return this;
     }
 
+    @Override
     public Request build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         this.loadHeaders.accept(
             this,
@@ -85,22 +91,27 @@ public class OkHttpRequestBuilder implements RequestOperator<Request>, Wrapper<R
         return this.raw.build();
     }
 
+    @Override
     public Request.Builder raw() {
         return this.raw;
     }
 
+    @Override
     public String getHeader(String name) {
         return this.headers.get(name);
     }
 
+    @Override
     public String getMethod() {
         return this.method;
     }
 
+    @Override
     public String getUrl() {
         return this.url;
     }
 
+    @Override
     public String getBody() {
         return this.body;
     }
