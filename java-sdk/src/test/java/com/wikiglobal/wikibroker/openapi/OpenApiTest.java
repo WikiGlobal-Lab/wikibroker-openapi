@@ -3,10 +3,14 @@ package com.wikiglobal.wikibroker.openapi;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.alibaba.fastjson2.JSON;
+import com.wikiglobal.wikibroker.openapi.adapters.ApacheHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 import okhttp3.*;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ProtocolException;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -66,7 +70,27 @@ public class OpenApiTest {
 
     @Test
     void testApache() {
-        // TODO
+        final var raw = ClassicRequestBuilder.create(method);
+        final var builder = new ApacheHttpRequestBuilder(
+            raw,
+            apiKey,
+            apiSecret,
+            WikiBrokerOpenApi::addXHeaders,
+            WikiBrokerOpenApi::sign,
+            () -> timestamp,
+            () -> nonce
+        );
+        try {
+            final var req = builder.setUrl(url()).setMethod(method).setBody(body).build();
+            final var actualSignature = req.getHeader(CustomHeaders.Signature.value()).getValue();
+            assertEquals(expectedSignature, actualSignature);
+        } catch (MalformedURLException |
+                 URISyntaxException |
+                 NoSuchAlgorithmException |
+                 InvalidKeyException |
+                 ProtocolException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

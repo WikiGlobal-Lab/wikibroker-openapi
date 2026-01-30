@@ -1,9 +1,8 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -11,31 +10,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
 import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
 import com.wikiglobal.wikibroker.openapi.common.types.Sign;
 import com.wikiglobal.wikibroker.openapi.common.types.Wrapper;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.http.message.BasicHeader;
 
-public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper<HttpRequest.Builder> {
-    private final HttpRequest.Builder raw;
+public class ApacheHttpRequestBuilder implements RequestOperator<ClassicHttpRequest>, Wrapper<ClassicRequestBuilder> {
+    private final ClassicRequestBuilder raw;
     private final Map<String, String> headers;
     private String method;
     private String url;
     private String body;
     private final UUID apiKey;
     private final String apiSecret;
-    private final LoadHeaders<HttpRequest> loadHeaders;
-    private final Sign<HttpRequest> sign;
+    private final LoadHeaders<ClassicHttpRequest> loadHeaders;
+    private final Sign<ClassicHttpRequest> sign;
     private final Supplier<Instant> timestampGenerator;
     private final Supplier<UUID> idGenerator;
 
-    public HttpRequestBuilder(
-        HttpRequest.Builder raw,
+    public ApacheHttpRequestBuilder(
+        ClassicRequestBuilder raw,
         UUID apiKey,
         String apiSecret,
-        LoadHeaders<HttpRequest> loadHeaders,
-        Sign<HttpRequest> sign,
+        LoadHeaders<ClassicHttpRequest> loadHeaders,
+        Sign<ClassicHttpRequest> sign,
         Supplier<Instant> timestampGenerator,
         Supplier<UUID> idGenerator
     ) {
@@ -50,35 +55,31 @@ public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper
     }
 
     @Override
-    public HttpRequestBuilder setHeader(String name, String value) {
+    public ApacheHttpRequestBuilder setHeader(String name, String value) {
         this.headers.put(name, value);
-        this.raw.setHeader(name, this.headers.get(name));
         return this;
     }
 
     @Override
-    public HttpRequestBuilder setMethod(String method) {
+    public ApacheHttpRequestBuilder setMethod(String method) {
         this.method = method.toUpperCase();
-        this.raw.method(this.method, HttpRequest.BodyPublishers.ofString(this.body));
         return this;
     }
 
     @Override
-    public HttpRequestBuilder setUrl(String url) {
+    public ApacheHttpRequestBuilder setUrl(String url) {
         this.url = url;
-        this.raw.uri(URI.create(this.url));
         return this;
     }
 
     @Override
-    public HttpRequestBuilder setBody(String data) {
+    public ApacheHttpRequestBuilder setBody(String data) {
         this.body = data;
-        this.raw.method(this.method, HttpRequest.BodyPublishers.ofString(this.body));
         return this;
     }
 
     @Override
-    public HttpRequest build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
+    public ClassicHttpRequest build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         this.loadHeaders.accept(
             this,
             this.apiKey,
@@ -86,11 +87,21 @@ public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper
             this.idGenerator.get()
         );
         this.sign.accept(this, this.apiSecret);
-        return this.raw.build();
+        final var headers = this.headers.entrySet()
+                                        .stream()
+                                        .map(entry -> new BasicHeader(
+                                            entry.getKey(),
+                                            entry.getValue()
+                                        )).toArray(Header[]::new);
+        return ClassicRequestBuilder.create(this.method)
+                                    .setHeaders(headers)
+                                    .setUri(this.url)
+                                    .setEntity(this.body)
+                                    .build();
     }
 
     @Override
-    public HttpRequest.Builder raw() {
+    public ClassicRequestBuilder raw() {
         return this.raw;
     }
 
