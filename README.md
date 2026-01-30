@@ -260,6 +260,8 @@ async def send_request():
 send_request()
 ```
 
+#### `Java`/`Kotlin`接入（[开发中](./java-sdk)）
+
 ### 通过API接入
 
 如果你使用的编程语言没有可用的SDK，可以按照以下方式自行编写接入代码。
