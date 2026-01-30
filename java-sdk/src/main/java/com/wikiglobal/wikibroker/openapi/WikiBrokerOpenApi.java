@@ -17,10 +17,10 @@ public class WikiBrokerOpenApi {
     }
 
     public static <T> void addXHeaders(
-            @NonNull RequestBuilder<T> builder,
-            @NonNull UUID apiKey,
-            @NonNull Instant timestamp,
-            @NonNull UUID nonce
+        @NonNull RequestBuilder<T> builder,
+        @NonNull UUID apiKey,
+        @NonNull Instant timestamp,
+        @NonNull UUID nonce
     ) {
         builder.setHeader(CustomHeaders.ApiKey.value(), apiKey.toString())
                .setHeader(CustomHeaders.TimeStamp.value(), String.valueOf(timestamp.toEpochMilli()))
@@ -28,8 +28,8 @@ public class WikiBrokerOpenApi {
     }
 
     public static <T> void sign(
-            RequestOperator<T> req,
-            String key
+        RequestOperator<T> req,
+        String key
     ) throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         final var canonicalString = Core.generateCanonicalString(req);
         final var signature = Core.generateSignature(key, canonicalString);

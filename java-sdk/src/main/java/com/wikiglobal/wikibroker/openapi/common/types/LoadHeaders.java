@@ -5,5 +5,10 @@ import java.util.UUID;
 
 @FunctionalInterface
 public interface LoadHeaders<T> {
-    void accept(RequestBuilder<T> builder, UUID apiKey, Instant timestamp, UUID nonce);
+    void accept(
+        RequestBuilder<T> builder,
+        UUID apiKey,
+        Instant timestamp,
+        UUID nonce
+    );
 }

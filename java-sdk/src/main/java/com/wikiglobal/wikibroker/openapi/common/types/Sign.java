@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public interface Sign<T> {
     void accept(
-            RequestOperator<T> req,
-            String key
+        RequestOperator<T> req,
+        String key
     ) throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException;
 }

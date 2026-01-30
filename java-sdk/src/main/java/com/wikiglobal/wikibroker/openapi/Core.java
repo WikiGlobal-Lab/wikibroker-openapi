@@ -26,14 +26,14 @@ public final class Core {
 
     @Contract("_, _ -> new")
     public static @NonNull String generateSignature(
-            @NonNull String key,
-            @NonNull String message
+        @NonNull String key,
+        @NonNull String message
     ) throws NoSuchAlgorithmException, InvalidKeyException {
         return Hex.encodeHexString(Hash.hmacSha256(key, message));
     }
 
     public static @NonNull String generateCanonicalString(
-            @NonNull RequestReader req
+        @NonNull RequestReader req
     ) throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException {
         final var method = req.getMethod().toUpperCase();
         final var path = new URI(req.getUrl()).toURL().getPath();
@@ -52,14 +52,17 @@ public final class Core {
     }
 
     private static @NonNull String buildCanonicalQuery(
-            @NonNull RequestReader req
+        @NonNull RequestReader req
     ) throws URISyntaxException, MalformedURLException {
         final var queryString = new URI(req.getUrl()).toURL().getQuery();
         final var query = Arrays.stream(queryString.split("&"))
                                 .map(pair -> pair.split("="))
                                 .collect(Collectors.groupingBy(
-                                        x -> x[0],
-                                        Collectors.mapping(x -> x[1], Collectors.toList())
+                                    x -> x[0],
+                                    Collectors.mapping(
+                                        x -> x[1],
+                                        Collectors.toList()
+                                    )
                                 ));
         for (var pair : query.entrySet()) {
             pair.getValue().sort(Comparator.naturalOrder());

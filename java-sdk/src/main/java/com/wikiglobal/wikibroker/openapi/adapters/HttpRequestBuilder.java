@@ -1,6 +1,10 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
-import com.wikiglobal.wikibroker.openapi.common.types.*;
+
+import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
+import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
+import com.wikiglobal.wikibroker.openapi.common.types.Sign;
+import com.wikiglobal.wikibroker.openapi.common.types.Wrapper;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -28,13 +32,13 @@ public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper
     private final Supplier<UUID> idGenerator;
 
     public HttpRequestBuilder(
-            HttpRequest.Builder raw,
-            UUID apiKey,
-            String apiSecret,
-            LoadHeaders<HttpRequest> loadHeaders,
-            Sign<HttpRequest> sign,
-            Supplier<Instant> timestampGenerator,
-            Supplier<UUID> idGenerator
+        HttpRequest.Builder raw,
+        UUID apiKey,
+        String apiSecret,
+        LoadHeaders<HttpRequest> loadHeaders,
+        Sign<HttpRequest> sign,
+        Supplier<Instant> timestampGenerator,
+        Supplier<UUID> idGenerator
     ) {
         this.raw = raw;
         this.headers = new HashMap<>();
@@ -72,10 +76,10 @@ public class HttpRequestBuilder implements RequestOperator<HttpRequest>, Wrapper
 
     public HttpRequest build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         this.loadHeaders.accept(
-                this,
-                this.apiKey,
-                this.timestampGenerator.get(),
-                this.idGenerator.get()
+            this,
+            this.apiKey,
+            this.timestampGenerator.get(),
+            this.idGenerator.get()
         );
         this.sign.accept(this, this.apiSecret);
         return this.raw.build();

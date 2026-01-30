@@ -14,12 +14,12 @@ public final class Hash {
     }
 
     public static byte[] hmacSha256(
-            @NonNull String key,
-            @NonNull String message
+        @NonNull String key,
+        @NonNull String message
     ) throws NoSuchAlgorithmException, InvalidKeyException {
         final var restoreKey = new SecretKeySpec(
-                key.getBytes(StandardCharsets.UTF_8),
-                "HmacSHA256"
+            key.getBytes(StandardCharsets.UTF_8),
+            "HmacSHA256"
         );
         final var mac = Mac.getInstance(restoreKey.getAlgorithm());
         mac.init(restoreKey);
