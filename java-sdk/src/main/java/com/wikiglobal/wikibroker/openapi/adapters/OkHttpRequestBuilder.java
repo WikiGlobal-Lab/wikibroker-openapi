@@ -11,6 +11,7 @@ import com.wikiglobal.wikibroker.openapi.common.interfaces.Sign;
 import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.jspecify.annotations.NonNull;
 
 public final class OkHttpRequestBuilder extends AbstractRequestBuilder<Request> {
     public OkHttpRequestBuilder(
@@ -25,7 +26,7 @@ public final class OkHttpRequestBuilder extends AbstractRequestBuilder<Request> 
     }
 
     @Override
-    protected Request buildRequest() {
+    protected @NonNull Request buildRequest() {
         return new Request.Builder().method(
                                         this.method,
                                         RequestBody.create(this.body.getBytes(StandardCharsets.UTF_8))
