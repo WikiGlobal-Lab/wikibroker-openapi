@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.Sign;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.LoadHeaders;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.Sign;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;

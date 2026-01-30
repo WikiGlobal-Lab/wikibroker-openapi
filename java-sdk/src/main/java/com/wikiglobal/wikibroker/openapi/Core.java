@@ -4,7 +4,7 @@ import com.wikiglobal.wikibroker.openapi.common.Hash;
 import com.wikiglobal.wikibroker.openapi.common.Utils;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 
-import com.wikiglobal.wikibroker.openapi.common.types.RequestReader;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestReader;
 import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;

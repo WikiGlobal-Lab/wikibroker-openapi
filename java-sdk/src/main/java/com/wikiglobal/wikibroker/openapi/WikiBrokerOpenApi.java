@@ -1,8 +1,8 @@
 package com.wikiglobal.wikibroker.openapi;
 
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.RequestBuilder;
-import com.wikiglobal.wikibroker.openapi.common.types.RequestOperator;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestOperator;
 import org.jspecify.annotations.NonNull;
 
 import java.net.MalformedURLException;
