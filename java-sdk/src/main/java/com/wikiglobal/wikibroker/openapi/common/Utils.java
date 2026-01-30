@@ -1,6 +1,6 @@
 package com.wikiglobal.wikibroker.openapi.common;
 
-import com.wikiglobal.wikibroker.openapi.common.types.RequestReader;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestReader;
 import org.jspecify.annotations.NonNull;
 
 public class Utils {

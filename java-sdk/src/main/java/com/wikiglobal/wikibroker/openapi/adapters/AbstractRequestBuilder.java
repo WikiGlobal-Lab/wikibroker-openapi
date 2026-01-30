@@ -1,6 +1,6 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
-import com.wikiglobal.wikibroker.openapi.common.types.*;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.*;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

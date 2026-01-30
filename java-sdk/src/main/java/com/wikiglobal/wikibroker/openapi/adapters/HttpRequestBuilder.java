@@ -7,8 +7,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.Sign;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.LoadHeaders;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.Sign;
 
 public final class HttpRequestBuilder extends AbstractRequestBuilder<HttpRequest> {
     public HttpRequestBuilder(

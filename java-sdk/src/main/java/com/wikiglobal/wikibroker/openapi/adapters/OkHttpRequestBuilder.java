@@ -5,8 +5,8 @@ import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.wikiglobal.wikibroker.openapi.common.types.LoadHeaders;
-import com.wikiglobal.wikibroker.openapi.common.types.Sign;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.LoadHeaders;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.Sign;
 
 import okhttp3.Headers;
 import okhttp3.Request;

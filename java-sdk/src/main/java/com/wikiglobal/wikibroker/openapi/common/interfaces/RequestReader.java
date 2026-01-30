@@ -1,4 +1,4 @@
-package com.wikiglobal.wikibroker.openapi.common.types;
+package com.wikiglobal.wikibroker.openapi.common.interfaces;
 
 public interface RequestReader {
     String getHeader(String name);
