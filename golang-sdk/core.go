@@ -11,9 +11,9 @@ import (
 	"wikibroker_openapi_sdk/common"
 )
 
-func generateSignature(key, canonicalString string) string {
+func generateSignature(key, message string) string {
 	h := hmac.New(sha256.New, []byte(key))
-	h.Write([]byte(canonicalString))
+	h.Write([]byte(message))
 	return hex.EncodeToString(h.Sum(nil))
 }
 

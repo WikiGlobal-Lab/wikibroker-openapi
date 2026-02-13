@@ -1,4 +1,5 @@
-import hmac, hashlib
+import hmac
+import hashlib
 from .common.types import Request
 from .common.enums import CustomHeaders
 from urllib.parse import urlparse, parse_qsl
