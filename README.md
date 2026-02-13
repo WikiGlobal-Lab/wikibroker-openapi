@@ -27,17 +27,17 @@ WikiBroker的OpenAPI接口都会校验请求
 <details>
 <summary>npm</summary>
 
-    npm install ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+    npm install ./wikibroker-openapi-js-sdk-1.0.0.tgz
 </details>
 <details>
 <summary>yarn</summary>
 
-    yarn add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+    yarn add ./wikibroker-openapi-js-sdk-1.0.0.tgz
 </details>
 <details>
 <summary>pnpm</summary>
 
-    pnpm add ./wikibroker-openapi-js-sdk-0.1.0-alpha.tgz
+    pnpm add ./wikibroker-openapi-js-sdk-1.0.0.tgz
 </details>
 <br/>
 
@@ -89,7 +89,7 @@ axios.post(
 **安装**
 
 ```bash
-tar zxf wikibroker-openapi-go-sdk-0.1.0-alpha.tgz
+tar zxf wikibroker-openapi-go-sdk-1.0.0.tgz
 go mod edit -replace=wikibroker_openapi_sdk=./wikibroker_openapi_sdk
 go get wikibroker_openapi_sdk
 ```
@@ -186,17 +186,17 @@ agent.Post("https://api.example.com/test?q1=c&q2=b&q1=a").Send(body).End()
 <details>
 <summary>pip</summary>
 
-    pip install ./wikibroker_openapi_sdk-0.1.0a0-py3-none-any.whl
+    pip install ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
 </details>
 <details>
 <summary>poetry</summary>
 
-    poetry add ./wikibroker_openapi_sdk-0.1.0a0-py3-none-any.whl
+    poetry add ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
 </details>
 <details>
 <summary>uv</summary>
 
-    uv add ./wikibroker_openapi_sdk-0.1.0a0-py3-none-any.whl
+    uv add ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
 </details>
 <br/>
 
