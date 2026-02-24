@@ -260,7 +260,131 @@ async def send_request():
 send_request()
 ```
 
-#### `Java`/`Kotlin`接入（[开发中](./java-sdk)）
+#### `Java`/`Kotlin`接入
+
+**安装**
+
+`maven`
+
+1. 第一步：安装jar包
+
+    ```bash
+    mvn install:install-file \
+    -Dfile=./wikibroker-openapi-sdk-0.1.0-alpha.jar \
+    -DgroupId=com.wikiglobal \
+    -DartifactId=wikibroker-openapi-sdk \
+    -Dversion=0.1.0-alpha \
+    -Dpackaging=jar
+    ```
+
+2. 第二步：声明maven依赖
+
+    ```xml
+    <dependency>
+        <groupId>com.wikiglobal</groupId>
+        <artifactId>wikibroker-openapi-sdk</artifactId>
+        <version>0.1.0-alpha</version>
+        <scope>compile</scope>
+    ```
+
+`gradle`
+
+1. 方式一：使用Groovy声明依赖
+
+    `build.gradle`
+
+    ```groovy
+    dependencies {
+        implementation files('./wikibroker-openapi-sdk-0.1.0-alpha.jar')
+    }
+    ```
+
+2. 方式二：使用Kotlin声明依赖
+
+    `build.gradle.kts`
+
+    ```kotlin
+    dependencies {
+        implementation(files('./wikibroker-openapi-sdk-0.1.0-alpha.jar'))
+    }
+    ```
+
+**示例**
+
+`java.net.http`
+
+```java
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApiNativeRequestBuilderFactory;
+// ...
+final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+final var factory = new WikiBrokerOpenApiNativeRequestBuilderFactory(API_KEY, API_SECRET);
+
+try (var client = HttpClient.newHttpClient()) {
+    var builder = factory.create();
+    var req = builder.setMethod("POST")
+                     .setUrl("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .setBody("{\"key\":\"value\"")
+                     .build();
+    client.send(req, HttpResponse.BodyHandlers.ofString());
+} catch (Exception e) {
+    // Handle Exception
+}
+```
+
+`okhttp`
+
+```java
+import okhttp3.OkHttpClient;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApiOkhttpRequestBuilderFactory;
+// ...
+final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+final var factory = new WikiBrokerOpenApiOkhttpRequestBuilderFactory(API_KEY, API_SECRET);
+
+var client = new OkHttpClient();
+try {
+    var builder = factory.create();
+    var req = builder.setMethod("POST")
+                     .setUrl("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .setBody("{\"key\":\"value\"")
+                     .build();
+    try (var resp = client.newCall(req).execute()) {
+        // Handle Response
+    }
+} catch (Exception e) {
+    // Handle Exception
+}
+```
+
+`apache httpclient`
+
+```java
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApiApacheRequestBuilderFactory;
+// ...
+final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+final var factory = new WikiBrokerOpenApiApacheRequestBuilderFactory(API_KEY, API_SECRET);
+
+try (var client = HttpClients.createDefault()) {
+    var builder = factory.create();
+    var req = builder.setMethod("POST")
+                     .setUrl("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .setBody("{\"key\":\"value\"")
+                     .build();
+    client.execute(
+        req, resp -> {
+            // Handle Response
+            return null;
+        }
+    );
+} catch (Exception e) {
+    // Handle Exception
+}
+```
 
 ### 通过API接入
 
