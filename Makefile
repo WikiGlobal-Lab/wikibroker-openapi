@@ -27,7 +27,7 @@ build-go:
 
 build-py:
 	@echo "[3/4] 开始构建 Python SDK..."
-	@cd python-sdk && rm -rf dist && poetry build && mv dist/wikibroker*.whl ..
+	@cd python-sdk && rm -rf dist && uv build && mv dist/wikibroker*.whl ..
 	@echo "[3/4] Python SDK 构建完成 ✓"
 	@echo ""
 

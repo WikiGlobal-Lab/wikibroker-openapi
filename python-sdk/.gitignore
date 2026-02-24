@@ -1,3 +1,8 @@
 .venv
+.uv
 dist
 __pycache__
+.pytest_cache
+.mypy_cache
+*.pyc
+*.egg-info
