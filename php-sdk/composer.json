@@ -1,0 +1,18 @@
+{
+    "name": "wikiglobal/wikibroker-openapi-sdk",
+    "description": "WikiBroker OpenAPI SDK",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "WikibrokerOpenapiSdk\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Auston",
+            "email": "auston@wikiglobal.com"
+        }
+    ],
+    "require": {}
+}
