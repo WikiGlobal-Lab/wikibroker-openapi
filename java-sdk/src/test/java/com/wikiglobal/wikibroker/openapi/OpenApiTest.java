@@ -44,18 +44,18 @@ public class OpenApiTest {
 
     @Test
     void testNative() {
-        final var builder = new HttpRequestBuilder(
-            apiKey,
-            apiSecret,
-            WikiBrokerOpenApi::addXHeaders,
-            WikiBrokerOpenApi::sign,
-            () -> timestamp,
-            () -> nonce
-        );
+        final var builder = HttpRequestBuilder.builder()
+                                              .apiKey(apiKey)
+                                              .apiSecret(apiSecret)
+                                              .loadHeaders(WikiBrokerOpenApi::addXHeaders)
+                                              .sign(WikiBrokerOpenApi::sign)
+                                              .timestampGenerator(() -> timestamp)
+                                              .idGenerator(() -> nonce)
+                                              .build();
         try {
-            final var req = builder.setUrl(url())
-                                   .setMethod(method)
-                                   .setBody(body, JSON::toJSONString)
+            final var req = builder.url(url())
+                                   .method(method)
+                                   .body(body, JSON::toJSONString)
                                    .build();
             final var actualSignature = req.headers()
                                            .firstValue(CustomHeaders.Signature.value())
@@ -71,18 +71,19 @@ public class OpenApiTest {
 
     @Test
     void testApache() {
-        final var builder = new ApacheHttpRequestBuilder(
-            apiKey,
-            apiSecret,
-            WikiBrokerOpenApi::addXHeaders,
-            WikiBrokerOpenApi::sign,
-            () -> timestamp,
-            () -> nonce
-        );
+
+        final var builder = ApacheHttpRequestBuilder.builder()
+                                                    .apiKey(apiKey)
+                                                    .apiSecret(apiSecret)
+                                                    .loadHeaders(WikiBrokerOpenApi::addXHeaders)
+                                                    .sign(WikiBrokerOpenApi::sign)
+                                                    .timestampGenerator(() -> timestamp)
+                                                    .idGenerator(() -> nonce)
+                                                    .build();
         try {
-            final var req = builder.setUrl(url())
-                                   .setMethod(method)
-                                   .setBody(body, JSON::toJSONString)
+            final var req = builder.url(url())
+                                   .method(method)
+                                   .body(body, JSON::toJSONString)
                                    .build();
             final var actualSignature = req.getHeader(CustomHeaders.Signature.value()).getValue();
             assertEquals(expectedSignature, actualSignature);
@@ -97,18 +98,18 @@ public class OpenApiTest {
 
     @Test
     void testOkHttp() {
-        final var builder = new OkHttpRequestBuilder(
-            apiKey,
-            apiSecret,
-            WikiBrokerOpenApi::addXHeaders,
-            WikiBrokerOpenApi::sign,
-            () -> timestamp,
-            () -> nonce
-        );
+        final var builder = OkHttpRequestBuilder.builder()
+                                                .apiKey(apiKey)
+                                                .apiSecret(apiSecret)
+                                                .loadHeaders(WikiBrokerOpenApi::addXHeaders)
+                                                .sign(WikiBrokerOpenApi::sign)
+                                                .timestampGenerator(() -> timestamp)
+                                                .idGenerator(() -> nonce)
+                                                .build();
         try {
-            final var req = builder.setUrl(url())
-                                   .setMethod(method)
-                                   .setBody(body, JSON::toJSONString)
+            final var req = builder.url(url())
+                                   .method(method)
+                                   .body(body, JSON::toJSONString)
                                    .build();
             final var actualSignature = req.header(CustomHeaders.Signature.value());
             assertEquals(expectedSignature, actualSignature);

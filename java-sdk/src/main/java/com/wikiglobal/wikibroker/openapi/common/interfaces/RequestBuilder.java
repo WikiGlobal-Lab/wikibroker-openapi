@@ -7,15 +7,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.function.Function;
 
 public interface RequestBuilder<T> {
-    RequestBuilder<T> setHeader(String name, String value);
+    RequestBuilder<T> header(String name, String value);
 
-    RequestBuilder<T> setMethod(String method);
+    RequestBuilder<T> method(String method);
 
-    RequestBuilder<T> setUrl(String url);
+    RequestBuilder<T> url(String url);
 
-    RequestBuilder<T> setBody(String body);
+    RequestBuilder<T> body(String body);
 
-    <U> RequestBuilder<T> setBody(U body, Function<U, String> serialize);
+    <U> RequestBuilder<T> body(U body, Function<U, String> serialize);
 
     T build() throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException;
 }

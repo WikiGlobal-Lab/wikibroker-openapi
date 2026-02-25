@@ -3,6 +3,7 @@ package com.wikiglobal.wikibroker.openapi;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestOperator;
+import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.NonNull;
 
 import java.net.MalformedURLException;
@@ -12,27 +13,25 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.UUID;
 
+@UtilityClass
 public class WikiBrokerOpenApi {
-    private WikiBrokerOpenApi() {
-    }
-
-    public static <T> void addXHeaders(
+    public <T> void addXHeaders(
         @NonNull RequestBuilder<T> builder,
         @NonNull UUID apiKey,
         @NonNull Instant timestamp,
         @NonNull UUID nonce
     ) {
-        builder.setHeader(CustomHeaders.ApiKey.value(), apiKey.toString())
-               .setHeader(CustomHeaders.TimeStamp.value(), String.valueOf(timestamp.toEpochMilli()))
-               .setHeader(CustomHeaders.Nonce.value(), nonce.toString());
+        builder.header(CustomHeaders.ApiKey.value(), apiKey.toString())
+               .header(CustomHeaders.TimeStamp.value(), String.valueOf(timestamp.toEpochMilli()))
+               .header(CustomHeaders.Nonce.value(), nonce.toString());
     }
 
-    public static <T> void sign(
+    public <T> void sign(
         RequestOperator<T> req,
         String key
     ) throws MalformedURLException, URISyntaxException, NoSuchAlgorithmException, InvalidKeyException {
         final var canonicalString = Core.generateCanonicalString(req);
         final var signature = Core.generateSignature(key, canonicalString);
-        req.setHeader(CustomHeaders.Signature.value(), signature);
+        req.header(CustomHeaders.Signature.value(), signature);
     }
 }

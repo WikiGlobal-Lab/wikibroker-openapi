@@ -9,18 +9,14 @@ import java.util.function.Supplier;
 public abstract class AbstractBuilderFactory<T> implements Factory<RequestBuilder<T>> {
     protected final UUID apiKey;
     protected final String apiSecret;
-    protected final LoadHeaders<T> loadHeaders;
-    protected final Sign<T> sign;
-    protected final Supplier<Instant> timestampGenerator;
-    protected final Supplier<UUID> idGenerator;
+    protected final LoadHeaders<T> loadHeaders = WikiBrokerOpenApi::addXHeaders;
+    protected final Sign<T> sign = WikiBrokerOpenApi::sign;
+    protected final Supplier<Instant> timestampGenerator = Instant::now;
+    protected final Supplier<UUID> idGenerator = UUID::randomUUID;
 
     public AbstractBuilderFactory(String apiKey, String apiSecret) {
         this.apiKey = UUID.fromString(apiKey);
         this.apiSecret = apiSecret;
-        this.loadHeaders = WikiBrokerOpenApi::addXHeaders;
-        this.sign = WikiBrokerOpenApi::sign;
-        this.timestampGenerator = Instant::now;
-        this.idGenerator = UUID::randomUUID;
     }
 
     @Override

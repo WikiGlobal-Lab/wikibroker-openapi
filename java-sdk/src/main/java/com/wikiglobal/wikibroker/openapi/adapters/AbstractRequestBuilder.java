@@ -1,6 +1,10 @@
 package com.wikiglobal.wikibroker.openapi.adapters;
 
 import com.wikiglobal.wikibroker.openapi.common.interfaces.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 
 import java.net.MalformedURLException;
@@ -14,11 +18,14 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuperBuilder
+@Setter
+@Accessors(chain = true, fluent = true)
 public abstract class AbstractRequestBuilder<T> implements RequestOperator<T> {
-    protected final Map<String, String> headers;
-    protected String method;
-    protected String url;
-    protected String body;
+    protected final Map<String, String> headers = new HashMap<>();
+    @Getter protected String method;
+    @Getter protected String url;
+    @Getter protected String body;
     private final UUID apiKey;
     private final String apiSecret;
     private final LoadHeaders<T> loadHeaders;
@@ -26,49 +33,20 @@ public abstract class AbstractRequestBuilder<T> implements RequestOperator<T> {
     private final Supplier<Instant> timestampGenerator;
     private final Supplier<UUID> idGenerator;
 
-    public AbstractRequestBuilder(
-        UUID apiKey,
-        String apiSecret,
-        LoadHeaders<T> loadHeaders,
-        Sign<T> sign,
-        Supplier<Instant> timestampGenerator,
-        Supplier<UUID> idGenerator
-    ) {
-        this.headers = new HashMap<>();
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
-        this.loadHeaders = loadHeaders;
-        this.sign = sign;
-        this.timestampGenerator = timestampGenerator;
-        this.idGenerator = idGenerator;
-    }
-
     @Override
-    public final RequestBuilder<T> setHeader(String name, String value) {
+    public final RequestBuilder<T> header(String name, String value) {
         this.headers.put(name, value);
         return this;
     }
 
     @Override
-    public final RequestBuilder<T> setMethod(@NonNull String method) {
+    public final RequestBuilder<T> method(@NonNull String method) {
         this.method = method.toUpperCase();
         return this;
     }
 
     @Override
-    public final RequestBuilder<T> setUrl(String url) {
-        this.url = url;
-        return this;
-    }
-
-    @Override
-    public final RequestBuilder<T> setBody(String body) {
-        this.body = body;
-        return this;
-    }
-
-    @Override
-    public final <U> RequestBuilder<T> setBody(U body, @NonNull Function<U, String> serialize) {
+    public final <U> RequestBuilder<T> body(U body, @NonNull Function<U, String> serialize) {
         this.body = serialize.apply(body);
         return this;
     }
@@ -88,22 +66,7 @@ public abstract class AbstractRequestBuilder<T> implements RequestOperator<T> {
     protected abstract T buildRequest();
 
     @Override
-    public final String getHeader(String name) {
+    public final String header(String name) {
         return this.headers.get(name);
-    }
-
-    @Override
-    public final String getMethod() {
-        return this.method;
-    }
-
-    @Override
-    public final String getUrl() {
-        return this.url;
-    }
-
-    @Override
-    public final String getBody() {
-        return this.body;
     }
 }

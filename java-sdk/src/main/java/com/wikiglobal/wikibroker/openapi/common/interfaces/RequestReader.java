@@ -1,11 +1,11 @@
 package com.wikiglobal.wikibroker.openapi.common.interfaces;
 
 public interface RequestReader {
-    String getHeader(String name);
+    String header(String name);
 
-    String getMethod();
+    String method();
 
-    String getUrl();
+    String url();
 
-    String getBody();
+    String body();
 }

@@ -4,7 +4,6 @@ import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder;
 import okhttp3.Request;
 
-@SuppressWarnings("unused")
 public class WikiBrokerOpenApiOkhttpRequestBuilderFactory extends AbstractBuilderFactory<Request> {
     public WikiBrokerOpenApiOkhttpRequestBuilderFactory(String apiKey, String apiSecret) {
         super(apiKey, apiSecret);
@@ -12,13 +11,13 @@ public class WikiBrokerOpenApiOkhttpRequestBuilderFactory extends AbstractBuilde
 
     @Override
     public RequestBuilder<Request> create() {
-        return new OkHttpRequestBuilder(
-            this.apiKey,
-            this.apiSecret,
-            this.loadHeaders,
-            this.sign,
-            this.timestampGenerator,
-            this.idGenerator
-        );
+        return OkHttpRequestBuilder.builder()
+                                   .apiKey(this.apiKey)
+                                   .apiSecret(this.apiSecret)
+                                   .loadHeaders(this.loadHeaders)
+                                   .sign(this.sign)
+                                   .timestampGenerator(this.timestampGenerator)
+                                   .idGenerator(this.idGenerator)
+                                   .build();
     }
 }

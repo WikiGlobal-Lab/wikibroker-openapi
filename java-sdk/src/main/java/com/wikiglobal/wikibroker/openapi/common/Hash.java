@@ -1,5 +1,6 @@
 package com.wikiglobal.wikibroker.openapi.common;
 
+import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.NonNull;
 
 import javax.crypto.Mac;
@@ -9,11 +10,9 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@UtilityClass
 public class Hash {
-    private Hash() {
-    }
-
-    public static byte[] hmacSha256(
+    public byte[] hmacSha256(
         @NonNull String key,
         @NonNull String message
     ) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -26,7 +25,7 @@ public class Hash {
         return mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static byte[] sha256Hash(@NonNull String message) throws NoSuchAlgorithmException {
+    public byte[] sha256Hash(@NonNull String message) throws NoSuchAlgorithmException {
         final var md = MessageDigest.getInstance("SHA-256");
         md.update(message.getBytes(StandardCharsets.UTF_8));
         return md.digest();
