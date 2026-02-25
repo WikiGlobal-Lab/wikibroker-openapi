@@ -7,16 +7,12 @@ import com.wikiglobal.wikibroker.openapi.adapters.ApacheHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
-import okhttp3.*;
-import org.apache.hc.core5.http.ProtocolException;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +28,6 @@ public class OpenApiTest {
 
     private static final Map<String, String> body = Map.of("key", "value");
     private static final String method = "POST";
-
     private static final UUID apiKey = UUID.fromString("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b");
     private static final String apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
     private static final UUID nonce = UUID.fromString("4428a206-1afd-4b15-a98d-43e91f49a08d");
@@ -42,7 +37,18 @@ public class OpenApiTest {
     public OpenApiTest() {
     }
 
+    @SneakyThrows
+    private <T> T buildRequestWithJSON(RequestBuilder<T> builder) {
+        return builder.url(url()).method(method).body(body, JSON::toJSONString).build();
+    }
+
+    @SneakyThrows
+    private <T> T buildRequestWithString(RequestBuilder<T> builder) {
+        return builder.url(url()).method(method).body(JSON.toJSONString(body)).build();
+    }
+
     @Test
+    @SneakyThrows
     void testNative() {
         final var builder = HttpRequestBuilder.builder()
                                               .apiKey(apiKey)
@@ -52,26 +58,16 @@ public class OpenApiTest {
                                               .timestampGenerator(() -> timestamp)
                                               .idGenerator(() -> nonce)
                                               .build();
-        try {
-            final var req = builder.url(url())
-                                   .method(method)
-                                   .body(body, JSON::toJSONString)
-                                   .build();
-            final var actualSignature = req.headers()
-                                           .firstValue(CustomHeaders.Signature.value())
-                                           .orElse("");
-            assertEquals(expectedSignature, actualSignature);
-        } catch (MalformedURLException |
-                 URISyntaxException |
-                 NoSuchAlgorithmException |
-                 InvalidKeyException e) {
-            throw new RuntimeException(e);
-        }
+        final var req = this.buildRequestWithJSON(builder);
+        final var actualSignature = req.headers()
+                                       .firstValue(CustomHeaders.Signature.value())
+                                       .orElse("");
+        assertEquals(expectedSignature, actualSignature);
     }
 
     @Test
+    @SneakyThrows
     void testApache() {
-
         final var builder = ApacheHttpRequestBuilder.builder()
                                                     .apiKey(apiKey)
                                                     .apiSecret(apiSecret)
@@ -80,23 +76,13 @@ public class OpenApiTest {
                                                     .timestampGenerator(() -> timestamp)
                                                     .idGenerator(() -> nonce)
                                                     .build();
-        try {
-            final var req = builder.url(url())
-                                   .method(method)
-                                   .body(body, JSON::toJSONString)
-                                   .build();
-            final var actualSignature = req.getHeader(CustomHeaders.Signature.value()).getValue();
-            assertEquals(expectedSignature, actualSignature);
-        } catch (MalformedURLException |
-                 URISyntaxException |
-                 NoSuchAlgorithmException |
-                 InvalidKeyException |
-                 ProtocolException e) {
-            throw new RuntimeException(e);
-        }
+        final var req = this.buildRequestWithJSON(builder);
+        final var actualSignature = req.getHeader(CustomHeaders.Signature.value()).getValue();
+        assertEquals(expectedSignature, actualSignature);
     }
 
     @Test
+    @SneakyThrows
     void testOkHttp() {
         final var builder = OkHttpRequestBuilder.builder()
                                                 .apiKey(apiKey)
@@ -106,18 +92,49 @@ public class OpenApiTest {
                                                 .timestampGenerator(() -> timestamp)
                                                 .idGenerator(() -> nonce)
                                                 .build();
-        try {
-            final var req = builder.url(url())
-                                   .method(method)
-                                   .body(body, JSON::toJSONString)
-                                   .build();
-            final var actualSignature = req.header(CustomHeaders.Signature.value());
-            assertEquals(expectedSignature, actualSignature);
-        } catch (MalformedURLException |
-                 URISyntaxException |
-                 NoSuchAlgorithmException |
-                 InvalidKeyException e) {
-            throw new RuntimeException(e);
-        }
+        final var req = this.buildRequestWithJSON(builder);
+        final var actualSignature = req.header(CustomHeaders.Signature.value());
+        assertEquals(expectedSignature, actualSignature);
+    }
+
+    @Test
+    @SneakyThrows
+    void testNativeFactory() {
+        final var factory = new WikiBrokerOpenApiNativeRequestBuilderFactory(
+            apiKey.toString(),
+            apiSecret
+        );
+        final var builder = factory.create();
+        final var req = this.buildRequestWithString(builder);
+        final var actualSignature = req.headers()
+                                       .firstValue(CustomHeaders.Signature.value())
+                                       .orElse("");
+        System.out.println(actualSignature);
+    }
+
+    @Test
+    @SneakyThrows
+    void testApacheFactory() {
+        final var factory = new WikiBrokerOpenApiApacheRequestBuilderFactory(
+            apiKey.toString(),
+            apiSecret
+        );
+        final var builder = factory.create();
+        final var req = this.buildRequestWithString(builder);
+        final var actualSignature = req.getHeader(CustomHeaders.Signature.value()).getValue();
+        System.out.println(actualSignature);
+    }
+
+    @Test
+    @SneakyThrows
+    void testOkHttpFactory() {
+        final var factory = new WikiBrokerOpenApiOkhttpRequestBuilderFactory(
+            apiKey.toString(),
+            apiSecret
+        );
+        final var builder = factory.create();
+        final var req = this.buildRequestWithString(builder);
+        final var actualSignature = req.header(CustomHeaders.Signature.value());
+        System.out.println(actualSignature);
     }
 }
