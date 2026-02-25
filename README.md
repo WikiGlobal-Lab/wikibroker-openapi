@@ -324,9 +324,9 @@ final var factory = new WikiBrokerOpenApiNativeRequestBuilderFactory(API_KEY, AP
 
 try (var client = HttpClient.newHttpClient()) {
     var builder = factory.create();
-    var req = builder.setMethod("POST")
-                     .setUrl("https://api.example.com/test?q1=c&q2=b&q1=a")
-                     .setBody("{\"key\":\"value\"")
+    var req = builder.method("POST")
+                     .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .body("{\"key\":\"value\"")
                      .build();
     client.send(req, HttpResponse.BodyHandlers.ofString());
 } catch (Exception e) {
@@ -347,9 +347,9 @@ final var factory = new WikiBrokerOpenApiOkhttpRequestBuilderFactory(API_KEY, AP
 var client = new OkHttpClient();
 try {
     var builder = factory.create();
-    var req = builder.setMethod("POST")
-                     .setUrl("https://api.example.com/test?q1=c&q2=b&q1=a")
-                     .setBody("{\"key\":\"value\"")
+    var req = builder.method("POST")
+                     .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .body("{\"key\":\"value\"")
                      .build();
     try (var resp = client.newCall(req).execute()) {
         // Handle Response
@@ -371,9 +371,9 @@ final var factory = new WikiBrokerOpenApiApacheRequestBuilderFactory(API_KEY, AP
 
 try (var client = HttpClients.createDefault()) {
     var builder = factory.create();
-    var req = builder.setMethod("POST")
-                     .setUrl("https://api.example.com/test?q1=c&q2=b&q1=a")
-                     .setBody("{\"key\":\"value\"")
+    var req = builder.method("POST")
+                     .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .body("{\"key\":\"value\"")
                      .build();
     client.execute(
         req, resp -> {
