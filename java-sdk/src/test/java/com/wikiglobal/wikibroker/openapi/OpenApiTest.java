@@ -38,12 +38,12 @@ public class OpenApiTest {
     }
 
     @SneakyThrows
-    private <T> T buildRequestWithJSON(RequestBuilder<T> builder) {
+    private <T> T buildRequestWithJSON(@NonNull RequestBuilder<T> builder) {
         return builder.url(url()).method(method).body(body, JSON::toJSONString).build();
     }
 
     @SneakyThrows
-    private <T> T buildRequestWithString(RequestBuilder<T> builder) {
+    private <T> T buildRequestWithString(@NonNull RequestBuilder<T> builder) {
         return builder.url(url()).method(method).body(JSON.toJSONString(body)).build();
     }
 
