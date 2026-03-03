@@ -9,13 +9,18 @@ import com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder;
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
 import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder;
 import lombok.SneakyThrows;
+import okhttp3.Request;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
+import java.net.http.HttpRequest;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
+
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
 
 public class OpenApiTest {
     private static final String baseURL = "https://api.example.com";
@@ -100,9 +105,10 @@ public class OpenApiTest {
     @Test
     @SneakyThrows
     void testNativeFactory() {
-        final var factory = new WikiBrokerOpenApiNativeRequestBuilderFactory(
+        final var factory = new RequestBuilderFactory<HttpRequest>(
             apiKey.toString(),
-            apiSecret
+            apiSecret,
+            RequestBuilderFactory.Type.Native
         );
         final var builder = factory.create();
         final var req = this.buildRequestWithString(builder);
@@ -115,9 +121,10 @@ public class OpenApiTest {
     @Test
     @SneakyThrows
     void testApacheFactory() {
-        final var factory = new WikiBrokerOpenApiApacheRequestBuilderFactory(
+        final var factory = new RequestBuilderFactory<ClassicHttpRequest>(
             apiKey.toString(),
-            apiSecret
+            apiSecret,
+            RequestBuilderFactory.Type.Apache
         );
         final var builder = factory.create();
         final var req = this.buildRequestWithString(builder);
@@ -128,9 +135,10 @@ public class OpenApiTest {
     @Test
     @SneakyThrows
     void testOkHttpFactory() {
-        final var factory = new WikiBrokerOpenApiOkhttpRequestBuilderFactory(
+        final var factory = new RequestBuilderFactory<Request>(
             apiKey.toString(),
-            apiSecret
+            apiSecret,
+            RequestBuilderFactory.Type.OkHttp
         );
         final var builder = factory.create();
         final var req = this.buildRequestWithString(builder);

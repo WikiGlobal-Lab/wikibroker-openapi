@@ -1,8 +1,8 @@
 package com.wikiglobal.wikibroker.openapi;
 
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders;
-import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder;
-import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestOperator;
+import com.wikiglobal.wikibroker.openapi.common.interfaces.*;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.NonNull;
 
@@ -12,6 +12,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @UtilityClass
 public class WikiBrokerOpenApi {
@@ -33,5 +34,76 @@ public class WikiBrokerOpenApi {
         final var canonicalString = Core.generateCanonicalString(req);
         final var signature = Core.generateSignature(key, canonicalString);
         req.header(CustomHeaders.Signature.value(), signature);
+    }
+
+    public class RequestBuilderFactory<T> implements Factory<RequestBuilder<T>> {
+        private final UUID apiKey;
+        private final String apiSecret;
+
+        public RequestBuilderFactory(String apiKey, String apiSecret, Factory.Type type) {
+            this.apiKey = UUID.fromString(apiKey);
+            this.apiSecret = apiSecret;
+            this.init(type);
+        }
+
+        private Supplier<RequestBuilder<T>> create;
+
+        @SneakyThrows
+        private void init(Factory.@NonNull Type t) {
+            final var builderClass = switch (t) {
+                case Type.Native ->
+                    Class.forName("com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder");
+                case Type.OkHttp ->
+                    Class.forName("com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder");
+                case Type.Apache -> Class.forName(
+                    "com.wikiglobal.wikibroker.openapi.adapters.ApacheHttpRequestBuilder");
+            };
+            final var builderBuilder = builderClass.getDeclaredMethod("builder").invoke(null);
+            final var builderBuilderClass = builderBuilder.getClass();
+            final var apiKeyMethod = builderBuilderClass.getMethod("apiKey", UUID.class);
+            final var apiSecretMethod = builderBuilderClass.getMethod("apiSecret", String.class);
+            final var loadHeadersMethod = builderBuilderClass.getMethod(
+                "loadHeaders",
+                LoadHeaders.class
+            );
+            final var signMethod = builderBuilderClass.getMethod("sign", Sign.class);
+            final var timestampGeneratorMethod = builderBuilderClass.getMethod(
+                "timestampGenerator",
+                Supplier.class
+            );
+            final var idGeneratorMethod = builderBuilderClass.getMethod(
+                "idGenerator",
+                Supplier.class
+            );
+            final var buildBuilderMethod = builderBuilderClass.getDeclaredMethod("build");
+            buildBuilderMethod.setAccessible(true);
+            this.create = () -> {
+                try {
+                    apiKeyMethod.invoke(builderBuilder, this.apiKey);
+                    apiSecretMethod.invoke(builderBuilder, this.apiSecret);
+                    loadHeadersMethod.invoke(
+                        builderBuilder,
+                        (LoadHeaders<?>) WikiBrokerOpenApi::addXHeaders
+                    );
+                    signMethod.invoke(builderBuilder, (Sign<?>) WikiBrokerOpenApi::sign);
+                    timestampGeneratorMethod.invoke(
+                        builderBuilder,
+                        (Supplier<Instant>) Instant::now
+                    );
+                    idGeneratorMethod.invoke(builderBuilder, (Supplier<UUID>) UUID::randomUUID);
+                    @SuppressWarnings("unchecked") final var builder = (
+                        (RequestBuilder<T>) buildBuilderMethod.invoke(builderBuilder)
+                    );
+                    return builder;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            };
+        }
+
+        @Override
+        public RequestBuilder<T> create() {
+            return this.create.get();
+        }
     }
 }
