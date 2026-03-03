@@ -50,14 +50,7 @@ public class WikiBrokerOpenApi {
 
         @SneakyThrows
         private void init(Factory.@NonNull Type t) {
-            final var builderClass = switch (t) {
-                case Type.Native ->
-                    Class.forName("com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder");
-                case Type.OkHttp ->
-                    Class.forName("com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder");
-                case Type.Apache -> Class.forName(
-                    "com.wikiglobal.wikibroker.openapi.adapters.ApacheHttpRequestBuilder");
-            };
+            final var builderClass = Class.forName(t.value());
             final var builderBuilder = builderClass.getDeclaredMethod("builder").invoke(null);
             final var builderBuilderClass = builderBuilder.getClass();
             final var apiKeyMethod = builderBuilderClass.getMethod("apiKey", UUID.class);
