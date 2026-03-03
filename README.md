@@ -315,12 +315,17 @@ send_request()
 
 ```java
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApiNativeRequestBuilderFactory;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
 // ...
 final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
 final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
-final var factory = new WikiBrokerOpenApiNativeRequestBuilderFactory(API_KEY, API_SECRET);
+final var factory = new RequestBuilderFactory<HttpRequest>(
+    API_KEY,
+    API_SECRET,
+    RequestBuilderFactory.Type.Native
+);
 
 try (var client = HttpClient.newHttpClient()) {
     var builder = factory.create();
@@ -338,11 +343,16 @@ try (var client = HttpClient.newHttpClient()) {
 
 ```java
 import okhttp3.OkHttpClient;
-import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApiOkhttpRequestBuilderFactory;
+import okhttp3.Request;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
 // ...
 final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
 final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
-final var factory = new WikiBrokerOpenApiOkhttpRequestBuilderFactory(API_KEY, API_SECRET);
+final var factory = new RequestBuilderFactory<Request>(
+    API_KEY,
+    API_SECRET,
+    RequestBuilderFactory.Type.OkHttp
+);
 
 var client = new OkHttpClient();
 try {
@@ -363,11 +373,16 @@ try {
 
 ```java
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApiApacheRequestBuilderFactory;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
 // ...
 final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
 final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
-final var factory = new WikiBrokerOpenApiApacheRequestBuilderFactory(API_KEY, API_SECRET);
+final var factory = new RequestBuilderFactory<ClassicHttpRequest>(
+    API_KEY,
+    API_SECRET,
+    RequestBuilderFactory.Type.Apache
+);
 
 try (var client = HttpClients.createDefault()) {
     var builder = factory.create();
