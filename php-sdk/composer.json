@@ -14,5 +14,11 @@
             "email": "auston@wikiglobal.com"
         }
     ],
-    "require": {}
+    "require": {
+        "psr/http-message": "^2.0",
+        "ramsey/uuid": "^4.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12"
+    }
 }
