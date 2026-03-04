@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace WikibrokerOpenapiSdk;
 
 use DateTime;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Ramsey\Uuid\Uuid;
+use WikibrokerOpenapiSdk\Adapters\GuzzleSignMiddleware;
+use WikibrokerOpenapiSdk\Adapters\PsrHttpClientWithSign;
 use WikibrokerOpenapiSdk\Enum\CustomHeaders;
 
 class Api {
@@ -29,5 +32,28 @@ class Api {
         $canonicalString = Core::generateCanonicalString($req);
         $signature = Core::generateSignature($key, $canonicalString);
         return $req->withHeader(CustomHeaders::Signature->value, $signature);
+    }
+
+    public static function createGuzzleSignMiddleware(string $apiKey, string $apiSecret): callable {
+        return new GuzzleSignMiddleware(
+            $apiKey,
+            $apiSecret,
+            self::withXHeaders(...),
+            self::withSign(...),
+            fn() => new DateTime(),
+            Uuid::uuid4(...)
+        );
+    }
+
+    public static function createPsrHttpClientWithSign(ClientInterface $rawClient, string $apiKey, string $apiSecret): ClientInterface {
+        return new PsrHttpClientWithSign(
+            $rawClient,
+            $apiKey,
+            $apiSecret,
+            self::withXHeaders(...),
+            self::withSign(...),
+            fn() => new DateTime(),
+            Uuid::uuid4(...)
+        );
     }
 }
