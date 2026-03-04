@@ -9,9 +9,9 @@ use Psr\Http\Message\RequestInterface;
 use Ramsey\Uuid\Uuid;
 use WikibrokerOpenapiSdk\Enum\CustomHeaders;
 
-class Api
-{
-    private function __construct() {}
+class Api {
+    private function __construct() {
+    }
 
     public static function withXHeaders(
         RequestInterface $req,
@@ -25,8 +25,7 @@ class Api
             ->withHeader(CustomHeaders::Nonce->value, Uuid::fromString($nonce)->toString());
     }
 
-    public static function withSign(RequestInterface $req, string $key): RequestInterface
-    {
+    public static function withSign(RequestInterface $req, string $key): RequestInterface {
         $canonicalString = Core::generateCanonicalString($req);
         $signature = Core::generateSignature($key, $canonicalString);
         return $req->withHeader(CustomHeaders::Signature->value, $signature);

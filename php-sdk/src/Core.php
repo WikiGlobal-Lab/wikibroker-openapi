@@ -7,17 +7,15 @@ namespace WikibrokerOpenapiSdk;
 use Psr\Http\Message\RequestInterface;
 use WikibrokerOpenapiSdk\Enum\CustomHeaders;
 
-final class Core
-{
-    private function __construct() {}
+final class Core {
+    private function __construct() {
+    }
 
     private static $algo = 'sha256';
-    public static function generateSignature(string $key, string $message): string
-    {
+    public static function generateSignature(string $key, string $message): string {
         return hash_hmac(self::$algo, $message, $key);
     }
-    public static function generateCanonicalString(RequestInterface $req): string
-    {
+    public static function generateCanonicalString(RequestInterface $req): string {
         $method = strtoupper($req->getMethod());
         $path = $req->getUri()->getPath();
         $canonicalQuery = self::buildCanonicalQuery($req);
@@ -36,14 +34,12 @@ final class Core
         ]);
     }
 
-    private static function calculateBodyHash(RequestInterface $req): string
-    {
+    private static function calculateBodyHash(RequestInterface $req): string {
         $body = (string) $req->getBody();
         return hash(self::$algo, $body);
     }
 
-    private static function buildCanonicalQuery(RequestInterface $req): string
-    {
+    private static function buildCanonicalQuery(RequestInterface $req): string {
         $queryString = $req->getUri()->getQuery();
         $query = [];
         foreach (explode('&', $queryString) as $item) {
