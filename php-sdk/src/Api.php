@@ -14,7 +14,7 @@ class Api
     private function __construct() {}
 
     public static function withXHeaders(
-        RequestInterface &$req,
+        RequestInterface $req,
         string $apiKey,
         DateTime $timestamp,
         string $nonce,
