@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WikibrokerOpenapiSdk\Test;
 
 use DateTime;
+use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\Psr18Client;
 use WikibrokerOpenapiSdk\Api;
@@ -26,10 +27,25 @@ final class ApiTest extends TestCase {
     private static $timestamp = 1798115622000;
     private static $expectedSignature = "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4";
 
-    public function testApi(): void {
+    public function testSymfony(): void {
         $client = new Psr18Client();
         $body = $client->createStream(json_encode(self::$body));
         $request = $client->createRequest(self::$method, self::url())->withBody($body);
+        $timestamp = DateTime::createFromFormat('U.v', sprintf('%d.%03d', intdiv(self::$timestamp, 1000), self::$timestamp % 1000));
+        $request = Api::withXHeaders(
+            $request,
+            self::$apiKey,
+            $timestamp,
+            self::$nonce
+        );
+        $request = Api::withSign($request, self::$apiSecret);
+        $actualSignature = $request->getHeader(CustomHeaders::Signature->value)[0];
+        $this->assertSame(self::$expectedSignature, $actualSignature);
+    }
+
+    public function testGuzzle(): void {
+        $body = json_encode(self::$body);
+        $request = new Request(self::$method, self::url(), [], $body);
         $timestamp = DateTime::createFromFormat('U.v', sprintf('%d.%03d', intdiv(self::$timestamp, 1000), self::$timestamp % 1000));
         $request = Api::withXHeaders(
             $request,
