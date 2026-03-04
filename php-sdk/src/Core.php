@@ -21,9 +21,9 @@ final class Core
         $method = strtoupper($req->getMethod());
         $path = $req->getUri()->getPath();
         $canonicalQuery = self::buildCanonicalQuery($req);
-        $apiKey = $req->getHeader(CustomHeaders::ApiKey->value);
-        $timestamp = $req->getHeader(CustomHeaders::Timestamp->value);
-        $nonce = $req->getHeader(CustomHeaders::Nonce->value);
+        $apiKey = $req->getHeader(CustomHeaders::ApiKey->value)[0];
+        $timestamp = $req->getHeader(CustomHeaders::Timestamp->value)[0];
+        $nonce = $req->getHeader(CustomHeaders::Nonce->value)[0];
         $bodyHash = self::calculateBodyHash($req);
         return join("\n", [
             $method,
