@@ -40,17 +40,17 @@ public class WikiBrokerOpenApi {
         private final UUID apiKey;
         private final String apiSecret;
 
-        public RequestBuilderFactory(String apiKey, String apiSecret, Factory.Type type) {
+        public RequestBuilderFactory(String apiKey, String apiSecret, String builderClassName) {
             this.apiKey = UUID.fromString(apiKey);
             this.apiSecret = apiSecret;
-            this.init(type);
+            this.init(builderClassName);
         }
 
         private Supplier<RequestBuilder<T>> create;
 
         @SneakyThrows
-        private void init(Factory.@NonNull Type t) {
-            final var builderClass = Class.forName(t.value());
+        private void init(String builderClassName) {
+            final var builderClass = Class.forName(builderClassName);
             final var builderBuilder = builderClass.getDeclaredMethod("builder").invoke(null);
             final var builderBuilderClass = builderBuilder.getClass();
             final var apiKeyMethod = builderBuilderClass.getMethod("apiKey", UUID.class);

@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 public interface Factory<T> {
     @AllArgsConstructor
-    enum Type {
+    enum BuiltInBuilder {
         Native("com.wikiglobal.wikibroker.openapi.adapters.HttpRequestBuilder"),
         OkHttp("com.wikiglobal.wikibroker.openapi.adapters.OkHttpRequestBuilder"),
         Apache("com.wikiglobal.wikibroker.openapi.adapters.ApacheHttpRequestBuilder");

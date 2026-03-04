@@ -108,7 +108,7 @@ public class OpenApiTest {
         final var factory = new RequestBuilderFactory<HttpRequest>(
             apiKey.toString(),
             apiSecret,
-            RequestBuilderFactory.Type.Native
+            RequestBuilderFactory.BuiltInBuilder.Native.value()
         );
         final var builder = factory.create();
         final var req = this.buildRequestWithString(builder);
@@ -124,7 +124,7 @@ public class OpenApiTest {
         final var factory = new RequestBuilderFactory<ClassicHttpRequest>(
             apiKey.toString(),
             apiSecret,
-            RequestBuilderFactory.Type.Apache
+            RequestBuilderFactory.BuiltInBuilder.Apache.value()
         );
         final var builder = factory.create();
         final var req = this.buildRequestWithString(builder);
@@ -138,7 +138,7 @@ public class OpenApiTest {
         final var factory = new RequestBuilderFactory<Request>(
             apiKey.toString(),
             apiSecret,
-            RequestBuilderFactory.Type.OkHttp
+            RequestBuilderFactory.BuiltInBuilder.OkHttp.value()
         );
         final var builder = factory.create();
         final var req = this.buildRequestWithString(builder);
