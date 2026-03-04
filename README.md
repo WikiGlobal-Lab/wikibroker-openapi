@@ -260,7 +260,7 @@ async def send_request():
 send_request()
 ```
 
-#### `Java`/`Kotlin`接入
+#### `Java`接入
 
 **安装**
 
@@ -399,6 +399,65 @@ try (var client = HttpClients.createDefault()) {
 } catch (Exception e) {
     // Handle Exception
 }
+```
+
+#### `PHP`接入
+
+**安装**
+
+```bash
+// TODO
+```
+
+**示例**
+
+`guzzle`
+
+```php
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use WikibrokerOpenapiSdk\Api;
+
+const API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+const API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+$stack = new HandlerStack();
+$stack->setHandler(new CurlHandler());
+$middleware = Api::createGuzzleSignMiddleware(API_KEY, API_SECRET);
+$stack->push($middleware);
+$client = new Client(['handler' => $stack]);
+
+$client->post(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    [
+        'query' => [
+            "q1" => ["c", "a"],
+            "q2" => ["b"]
+        ],
+        'json' => [
+            "key" => "value"
+        ]
+    ]
+);
+```
+
+`symfony/http-client`
+
+```php
+use Symfony\Component\HttpClient\Psr18Client;
+use WikibrokerOpenapiSdk\Api;
+
+const API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+const API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+$rawClient = new Psr18Client();
+$client = Api::createPsrHttpClientWithSign($rawClient, API_KEY, API_SECRET);
+
+$body = $rawClient->createStream(json_encode(["key" => "value"]));
+$request = $rawClient->createRequest(
+    "POST",
+    "https://api.example.com/test?q1=c&q2=b&q1=a"
+)->withBody($body);
+$client->sendRequest($request);
 ```
 
 ### 通过API接入
