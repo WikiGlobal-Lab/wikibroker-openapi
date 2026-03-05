@@ -1,5 +1,6 @@
 {
     "name": "wikiglobal/wikibroker-openapi-sdk",
+    "version": "0.1.0-alpha",
     "description": "WikiBroker OpenAPI SDK",
     "type": "library",
     "license": "MIT",
@@ -15,9 +16,11 @@
         }
     ],
     "scripts": {
-        "test": "phpunit tests"
+        "test": "phpunit tests",
+        "build": "@php build.php"
     },
     "require": {
+        "php": "^8.3",
         "psr/http-message": "^2.0",
         "ramsey/uuid": "^4.9",
         "psr/http-client": "^1.0"
