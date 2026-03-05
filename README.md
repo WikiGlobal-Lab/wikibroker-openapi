@@ -406,7 +406,9 @@ try (var client = HttpClients.createDefault()) {
 **安装**
 
 ```bash
-// TODO
+mv wikibroker-openapi-php-sdk-0.1.0-alpha.zip ./
+composer config repositories.local artifact ./
+composer require wikiglobal/wikibroker-openapi-sdk:0.1.0-alpha
 ```
 
 **示例**
