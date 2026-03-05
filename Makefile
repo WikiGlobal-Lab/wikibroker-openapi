@@ -42,3 +42,30 @@ build-php:
 	@cd php-sdk && composer build && rename 's/wikiglobal-wikibroker-openapi-sdk/wikibroker-openapi-php-sdk/' wikiglobal*.zip && mv wikibroker*.zip ..
 	@echo "[5/5] PHP SDK 构建完成 ✓"
 	@echo ""
+
+.PHONY: test test-js test-go test-py test-java test-php
+
+test:
+	@echo "运行所有 SDK 测试..."
+	@$(MAKE) test-js && $(MAKE) test-go && $(MAKE) test-py && $(MAKE) test-java && $(MAKE) test-php
+	@echo "所有 SDK 测试完成！"
+
+test-js:
+	@echo "[1/5] 运行 JavaScript SDK 测试..."
+	@cd javascript-sdk && pnpm test
+
+test-go:
+	@echo "[2/5] 运行 Go SDK 测试..."
+	@cd golang-sdk && go test -v
+
+test-py:
+	@echo "[3/5] 运行 Python SDK 测试..."
+	@cd python-sdk && uv run pytest
+
+test-java:
+	@echo "[4/5] 运行 Java SDK 测试..."
+	@cd java-sdk && mvn test
+
+test-php:
+	@echo "[5/5] 运行 PHP SDK 测试..."
+	@cd php-sdk && composer test
