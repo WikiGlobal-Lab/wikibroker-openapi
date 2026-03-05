@@ -69,3 +69,35 @@ test-java:
 test-php:
 	@echo "[5/5] 运行 PHP SDK 测试..."
 	@cd php-sdk && composer test
+
+.PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php
+
+cloc:
+	@echo "统计所有SDK代码行数..."; \
+	TS=$$($(MAKE) cloc-js | grep TypeScript | awk '{print $$1 "\t" $$5}'); \
+	GO=$$($(MAKE) cloc-go | grep "Go  " | awk '{print $$1 "\t" $$5}'); \
+	PY=$$($(MAKE) cloc-py | grep "Python  " | awk '{print $$1 "\t" $$5}'); \
+	JAVA=$$($(MAKE) cloc-java | grep "Java  " | awk '{print $$1 "\t" $$5}'); \
+	PHP=$$($(MAKE) cloc-php | grep "PHP  " | awk '{print $$1 "\t" $$5}'); \
+	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP
+	@echo "所有 SDK 代码行数统计完毕！"
+
+cloc-js:
+	@echo "统计 JavaScript SDK 代码行数..."
+	@cd javascript-sdk && cloc src
+
+cloc-go:
+	@echo "统计 Go SDK 代码行数..."
+	@cd golang-sdk && cloc . --exclude_list_file=wikibroker_openapi_sdk_test.go
+
+cloc-py:
+	@echo "统计 Python SDK 代码行数..."
+	@cd python-sdk && cloc src
+
+cloc-java:
+	@echo "统计 Java SDK 代码行数..."
+	@cd java-sdk && cloc src/main
+
+cloc-php:
+	@echo "统计 PHP SDK 代码行数..."
+	@cd php-sdk && cloc src
