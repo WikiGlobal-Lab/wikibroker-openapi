@@ -450,7 +450,7 @@ use WikibrokerOpenapiSdk\Api;
 const API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
 const API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
 $rawClient = new Psr18Client();
-$client = Api::createPsrHttpClientWithSign($rawClient, API_KEY, API_SECRET);
+$client = Api::createPsrHttpClientWithSign(API_KEY, API_SECRET)->setClient($rawClient);
 
 $body = $rawClient->createStream(json_encode(["key" => "value"]));
 $request = $rawClient->createRequest(
