@@ -41,20 +41,25 @@ final class Core {
 
     private static function buildCanonicalQuery(RequestInterface $req): string {
         $queryString = $req->getUri()->getQuery();
+        if (empty($queryString)) {
+            return '';
+        }
         $query = [];
         foreach (explode('&', $queryString) as $item) {
-            [$k, $v] = explode('=', $item);
-            if (!array_key_exists($k, $query)) {
-                $query[$k] = [];
+            if (empty($item)) {
+                continue;
             }
-            array_push($query[$k], $v);
+            [$k, $v] = explode('=', $item);
+            if (!empty($v)) {
+                $query[$k][] = $v;
+            }
         }
         ksort($query);
         $pairs = [];
         foreach ($query as $key => $values) {
             sort($values);
             foreach ($values as $value) {
-                array_push($pairs, $key . '=' . $value);
+                $pairs[] = "{$key}={$value}";
             }
         }
         return join('&', $pairs);
