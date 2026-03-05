@@ -45,9 +45,8 @@ class Api {
         );
     }
 
-    public static function createPsrHttpClientWithSign(ClientInterface $rawClient, string $apiKey, string $apiSecret): ClientInterface {
+    public static function createPsrHttpClientWithSign(string $apiKey, string $apiSecret): PsrHttpClientWithSign {
         return new PsrHttpClientWithSign(
-            $rawClient,
             $apiKey,
             $apiSecret,
             self::withXHeaders(...),
