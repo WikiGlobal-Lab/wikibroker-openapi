@@ -17,7 +17,7 @@
     ],
     "scripts": {
         "test": "phpunit tests",
-        "build": "@php build.php"
+        "build": "@composer archive --format=zip"
     },
     "require": {
         "php": "^8.3",

@@ -39,6 +39,6 @@ build-java:
 
 build-php:
 	@echo "[5/5] 开始构建 PHP SDK..."
-	@cd php-sdk && composer build && mv wikibroker*.zip ..
+	@cd php-sdk && composer build && rename 's/wikiglobal-wikibroker-openapi-sdk/wikibroker-openapi-php-sdk/' wikiglobal*.zip && mv wikibroker*.zip ..
 	@echo "[5/5] PHP SDK 构建完成 ✓"
 	@echo ""
