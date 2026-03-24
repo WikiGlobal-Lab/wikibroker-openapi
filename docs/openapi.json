@@ -1,8 +1,8 @@
 {
   "info": {
     "description": "crm saas",
-    "title": "wlink",
-    "version": "v1"
+    "title": "WikiBroker",
+    "version": "v1.4"
   },
   "paths": {
     "/v1/auth/account/change-password": {
@@ -536,27 +536,25 @@
     "/v1/client/account/balance/list": {
       "get": {
         "description": "查询所持账户的余额",
-        "tags": [
-          "Client接口(65)"
-        ],
         "summary": "查询所持账户的余额-申请接口",
         "operationId": "applicationListAccountBalance",
+        "tags": [
+          "Client接口(68)"
+        ],
         "parameters": [
           {
-            "description": "记录类型：只能入金(deposit_only)、只能出金(withdrawal_only),入金出金都可以(normal)，入金传入deposit_only和normal，出金传入withdrawal_only和normal",
             "name": "type",
             "in": "query",
             "required": true,
+            "description": "记录类型：只能入金(deposit_only)、只能出金(withdrawal_only),入金出金都可以(normal)，入金传入deposit_only和normal，出金/转账转出传入withdrawal_only、normal和wallet，转账转入传入deposit_only、normal和wallet",
             "schema": {
               "type": "array",
               "enum": [
                 "deposit_only",
                 "withdrawal_only",
-                "normal"
-              ],
-              "items": {
-                "type": "string"
-              }
+                "normal",
+                "wallet"
+              ]
             }
           }
         ],
@@ -620,7 +618,7 @@
       "post": {
         "description": "创建开户申请-Client端接口",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "创建开户申请-申请接口",
         "operationId": "applicationCreateAccountApplication",
@@ -696,11 +694,71 @@
     "/v1/client/application/transfer/create": {
       "post": {
         "description": "创建转账申请",
-        "tags": [
-          "Client接口(65)"
-        ],
         "summary": "创建转账申请-申请接口",
         "operationId": "applicationCreateTransferApplication",
+        "tags": [
+          "Client接口(68)"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "source_trading_account_id",
+                  "target_trading_account_id",
+                  "source_account_type",
+                  "target_account_type",
+                  "amount",
+                  "remark"
+                ],
+                "properties": {
+                  "amount": {
+                    "description": "转账金额",
+                    "type": "string"
+                  },
+                  "email_code": {
+                    "description": "邮箱验证码",
+                    "type": "string"
+                  },
+                  "remark": {
+                    "description": "注释",
+                    "type": "string"
+                  },
+                  "source_account_type": {
+                    "description": "转出账户类型",
+                    "type": "string",
+                    "default": "trading",
+                    "enum": [
+                      "trading",
+                      "wallet"
+                    ],
+                    "example": "trading"
+                  },
+                  "source_trading_account_id": {
+                    "description": "转出交易账户ID",
+                    "type": "integer"
+                  },
+                  "target_account_type": {
+                    "description": "转入账户类型",
+                    "type": "string",
+                    "default": "trading",
+                    "enum": [
+                      "trading",
+                      "wallet"
+                    ],
+                    "example": "trading"
+                  },
+                  "target_trading_account_id": {
+                    "description": "转入交易账户ID",
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -722,92 +780,57 @@
               }
             }
           }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "source_trading_account_id",
-                  "target_trading_account_id",
-                  "amount",
-                  "remark"
-                ],
-                "properties": {
-                  "amount": {
-                    "description": "转账金额",
-                    "type": "string"
-                  },
-                  "email_code": {
-                    "description": "邮箱验证码",
-                    "type": "string"
-                  },
-                  "remark": {
-                    "description": "注释",
-                    "type": "string"
-                  },
-                  "source_trading_account_id": {
-                    "description": "转出交易账户ID",
-                    "type": "integer"
-                  },
-                  "target_trading_account_id": {
-                    "description": "转入交易账户ID",
-                    "type": "integer"
-                  }
-                }
-              }
-            }
-          }
         }
       }
     },
     "/v1/client/application/transfer/list": {
       "get": {
         "description": "查询转账历史列表",
-        "tags": [
-          "Client接口(65)"
-        ],
         "summary": "查询转账历史列表-申请接口",
         "operationId": "applicationListTransferHistory",
+        "tags": [
+          "Client接口(68)"
+        ],
         "parameters": [
           {
-            "description": "页码",
             "name": "page",
             "in": "query",
             "required": true,
+            "description": "页码",
             "schema": {
               "type": "integer",
               "default": 1
             }
           },
           {
-            "description": "每页数量",
             "name": "size",
             "in": "query",
             "required": true,
+            "description": "每页数量",
             "schema": {
               "type": "integer",
               "default": 20
             }
           },
           {
-            "description": "自定义开始时间（格式：YYYY-MM-DD HH:MM:SS）",
             "name": "start_time",
             "in": "query",
-            "allowEmptyValue": true,
+            "required": false,
+            "description": "自定义开始时间（格式：YYYY-MM-DD HH:MM:SS）",
             "schema": {
               "type": "string"
-            }
+            },
+            "allowEmptyValue": true
           },
           {
-            "description": "自定义结束时间（格式：YYYY-MM-DD HH:MM:SS）",
             "name": "end_time",
             "in": "query",
-            "allowEmptyValue": true,
+            "required": false,
+            "description": "自定义结束时间（格式：YYYY-MM-DD HH:MM:SS）",
             "schema": {
               "type": "string"
-            }
+            },
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -877,13 +900,14 @@
                                 "type": "string"
                               },
                               "server_type": {
-                                "description": "交易服务器类型",
+                                "description": "交易服务器类型，用作账户类型",
                                 "type": "string",
                                 "enum": [
                                   "MT4-Live",
                                   "MT4-Demo",
                                   "MT5-Live",
-                                  "MT5-Demo"
+                                  "MT5-Demo",
+                                  "Wallet"
                                 ]
                               }
                             }
@@ -925,13 +949,14 @@
                                 "type": "string"
                               },
                               "server_type": {
-                                "description": "交易服务器类型",
+                                "description": "交易服务器类型，用作账户类型",
                                 "type": "string",
                                 "enum": [
                                   "MT4-Live",
                                   "MT4-Demo",
                                   "MT5-Live",
-                                  "MT5-Demo"
+                                  "MT5-Demo",
+                                  "Wallet"
                                 ]
                               }
                             }
@@ -954,7 +979,7 @@
       "post": {
         "description": "创建电子认证会话",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "创建电子认证会话-电子认证",
         "operationId": "clientCreateEVerifySession",
@@ -1013,7 +1038,7 @@
       "get": {
         "description": "查询电子认证结果",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询电子认证结果-电子认证",
         "operationId": "clientGetEVerifyResult",
@@ -1068,7 +1093,7 @@
       "get": {
         "description": "消息详情",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "消息详情-消息中心",
         "operationId": "messageCenterForClientGetUserMessageForClient",
@@ -1123,7 +1148,7 @@
       "post": {
         "description": "隐藏消息",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "隐藏消息-消息中心",
         "operationId": "messageCenterForClientHideUserMessageForClient",
@@ -1163,7 +1188,7 @@
       "get": {
         "description": "消息列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "消息列表-消息中心",
         "operationId": "messageCenterForClientListUserMessageForClient",
@@ -1249,7 +1274,7 @@
       "post": {
         "description": "标记消息已读",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "标记消息已读-消息中心",
         "operationId": "messageCenterForClientMarkMessageReadForClient",
@@ -1289,7 +1314,7 @@
       "get": {
         "description": "获取未读消息数量",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取未读消息数量-消息中心",
         "operationId": "messageCenterForClientGetUnreadMessageCountForClient",
@@ -1317,7 +1342,7 @@
       "get": {
         "description": "查询Client用户问卷答案",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询Client用户问卷答案-客户接口",
         "operationId": "clientGetQuestionnaireResultByUser",
@@ -1389,7 +1414,7 @@
       "post": {
         "description": "保存Client用户问卷答案",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "保存Client用户问卷答案-客户接口",
         "operationId": "clientSaveClientQuestionnaire",
@@ -1474,7 +1499,7 @@
       "get": {
         "description": "获取软件下载工具列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取软件下载工具列表-客户接口",
         "operationId": "clientListTool",
@@ -1568,7 +1593,7 @@
       "get": {
         "description": "获取交易工具栏目多语言详情",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取交易工具栏目多语言详情-交易工具",
         "operationId": "tradingToolForClientGetTradingToolColumnI18nDetail",
@@ -1635,7 +1660,7 @@
       "get": {
         "description": "检查弹框是否已读",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "检查弹框是否已读-交易工具",
         "operationId": "tradingToolForClientCheckPopupRead",
@@ -1674,7 +1699,7 @@
       "post": {
         "description": "标记弹框已读",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "标记弹框已读-交易工具",
         "operationId": "tradingToolForClientMarkPopupRead",
@@ -1714,7 +1739,7 @@
       "get": {
         "description": "获取加密货币USDT可用网络",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取加密货币USDT可用网络-申请接口",
         "operationId": "applicationListAvailableCryptoNetwork",
@@ -1780,7 +1805,7 @@
       "get": {
         "description": "基于货币对返回汇率",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "基于货币对返回汇率-申请接口",
         "operationId": "applicationGetCurrencyExchangeRate",
@@ -1828,7 +1853,7 @@
       "get": {
         "description": "获取可用货币列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取可用货币列表-申请接口",
         "operationId": "applicationListAvailableCurrency",
@@ -1908,7 +1933,7 @@
       "post": {
         "description": "虚拟账户入金",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "虚拟账户入金-申请接口",
         "operationId": "applicationVirtualAccountDeposit",
@@ -1953,7 +1978,7 @@
       "post": {
         "description": "取消入金申请",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "取消入金申请-申请接口",
         "operationId": "applicationCancelDeposit",
@@ -2002,7 +2027,7 @@
       "get": {
         "description": "获取可用的入金渠道",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取可用的入金渠道-申请接口",
         "operationId": "applicationListAvailableDepositChannel",
@@ -2119,7 +2144,7 @@
       "post": {
         "description": "创建入金申请草稿",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "创建入金申请草稿-申请接口",
         "operationId": "applicationCreateDepositDraft",
@@ -2195,7 +2220,7 @@
       "get": {
         "description": "获取未提交入金申请草稿",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取未提交入金申请草稿-申请接口",
         "operationId": "applicationGetDepositDraft",
@@ -2246,7 +2271,7 @@
       "get": {
         "description": "获取未处理入金申请订单的数量",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取未处理入金申请订单的数量-申请接口",
         "operationId": "applicationGetDraftedDepositCount",
@@ -2296,7 +2321,7 @@
       "post": {
         "description": "提交入金申请（支付确认）",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "提交入金申请（支付确认）-申请接口",
         "operationId": "applicationSubmitDeposit",
@@ -2350,7 +2375,7 @@
       "get": {
         "description": "查询入金历史记录",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询入金历史记录-申请接口",
         "operationId": "applicationListDepositHistory",
@@ -2517,7 +2542,7 @@
       "get": {
         "description": "查询出金历史记录",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询出金历史记录-申请接口",
         "operationId": "applicationListWithdrawalHistory",
@@ -2670,7 +2695,7 @@
       "get": {
         "description": "获取可用的汇率列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取可用的汇率列表-申请接口",
         "operationId": "applicationListAvailableSymbolRate",
@@ -2746,7 +2771,7 @@
       "get": {
         "description": "获取可用的出金渠道",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取可用的出金渠道-申请接口",
         "operationId": "applicationListAvailableWithdrawalChannel",
@@ -2855,7 +2880,7 @@
       "post": {
         "description": "创建出金申请",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "创建出金申请-申请接口",
         "operationId": "applicationCreateWithdrawal",
@@ -3043,7 +3068,7 @@
       "get": {
         "description": "Client用户信息",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "Client用户信息-客户接口",
         "operationId": "clientGetClientUser",
@@ -3415,7 +3440,7 @@
       "get": {
         "description": "获取Client用户注册模板",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取Client用户注册模板-客户接口",
         "operationId": "clientGetClientUserRegisterTemplate",
@@ -3915,7 +3940,7 @@
       "post": {
         "description": "注册Client用户(Client端接口)",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "注册Client用户-客户接口",
         "operationId": "clientRegisterClientUser",
@@ -4001,7 +4026,7 @@
       "post": {
         "description": "保存Client用户身份信息",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "保存Client用户身份信息-客户接口",
         "operationId": "clientSaveClientUser",
@@ -4062,7 +4087,7 @@
       "post": {
         "description": "创建收款账户",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "创建收款账户-申请接口",
         "operationId": "applicationCreateWithdrawalAccountBook",
@@ -4196,7 +4221,7 @@
       "post": {
         "description": "删除收款账户",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "删除收款账户-申请接口",
         "operationId": "applicationDeleteWithdrawalAccountBook",
@@ -4236,7 +4261,7 @@
       "get": {
         "description": "获取收款账户详情",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取收款账户详情-申请接口",
         "operationId": "applicationGetWithdrawalAccountBook",
@@ -4379,7 +4404,7 @@
       "get": {
         "description": "获取收款账户列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取收款账户列表-申请接口",
         "operationId": "applicationListWithdrawalAccountBook",
@@ -4589,7 +4614,7 @@
       "post": {
         "description": "更新收款账户",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "更新收款账户-申请接口",
         "operationId": "applicationUpdateWithdrawalAccountBook",
@@ -7560,7 +7585,7 @@
       "post": {
         "description": "入金报表导出",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "入金报表导出-报表接口",
         "operationId": "reportExportDepositReport",
@@ -7620,7 +7645,7 @@
       "get": {
         "description": "入金报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "入金报表-报表接口",
         "operationId": "reportListDepositReport",
@@ -7783,7 +7808,7 @@
       "post": {
         "description": "导出历史订单报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "导出历史订单报表-报表接口",
         "operationId": "reportExportHistoryReport",
@@ -7886,7 +7911,7 @@
       "get": {
         "description": "查询历史订单报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询历史订单报表-报表接口",
         "operationId": "reportListHistoryReport",
@@ -8153,7 +8178,7 @@
       "post": {
         "description": "导出持仓报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "导出持仓报表-报表接口",
         "operationId": "reportExportHoldingReport",
@@ -8246,7 +8271,7 @@
       "get": {
         "description": "查询持仓报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询持仓报表-报表接口",
         "operationId": "reportListHoldingReport",
@@ -8499,7 +8524,7 @@
       "post": {
         "description": "导出挂单报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "导出挂单报表-报表接口",
         "operationId": "reportExportPendingReport",
@@ -8596,7 +8621,7 @@
       "get": {
         "description": "查询挂单报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询挂单报表-报表接口",
         "operationId": "reportListPendingReport",
@@ -9267,7 +9292,7 @@
       "get": {
         "description": "获取交易服务器选项列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取交易服务器选项列表-报表接口",
         "operationId": "reportListTradingServerOptions",
@@ -9352,7 +9377,7 @@
       "get": {
         "description": "查询用户交易过的品种列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询用户交易过的品种列表-报表接口",
         "operationId": "reportListSymbolByClient",
@@ -9409,7 +9434,7 @@
       "post": {
         "description": "导出转账报表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "导出转账报表-报表接口",
         "operationId": "reportExportTransferReport",
@@ -9487,64 +9512,67 @@
     "/v1/report/transfer/list": {
       "get": {
         "description": "查询转账报表",
-        "tags": [
-          "Client接口(65)"
-        ],
         "summary": "查询转账报表-报表接口",
         "operationId": "reportListTransferReport",
+        "tags": [
+          "Client接口(68)"
+        ],
         "parameters": [
           {
-            "description": "页码",
             "name": "page",
             "in": "query",
             "required": true,
+            "description": "页码",
             "schema": {
               "type": "integer",
               "default": 1
             }
           },
           {
-            "description": "每页数量",
             "name": "size",
             "in": "query",
             "required": true,
+            "description": "每页数量",
             "schema": {
               "type": "integer",
               "default": 20
             }
           },
           {
-            "description": "自定义开始时间（格式：YYYY-MM-DD HH:MM:SS）",
             "name": "start_time",
             "in": "query",
-            "allowEmptyValue": true,
+            "required": false,
+            "description": "自定义开始时间（格式：YYYY-MM-DD HH:MM:SS）",
             "schema": {
               "type": "string"
-            }
+            },
+            "allowEmptyValue": true
           },
           {
-            "description": "自定义结束时间（格式：YYYY-MM-DD HH:MM:SS）",
             "name": "end_time",
             "in": "query",
-            "allowEmptyValue": true,
+            "required": false,
+            "description": "自定义结束时间（格式：YYYY-MM-DD HH:MM:SS）",
             "schema": {
               "type": "string"
-            }
+            },
+            "allowEmptyValue": true
           },
           {
-            "description": "订单号",
             "name": "order_number",
             "in": "query",
-            "allowEmptyValue": true,
+            "required": false,
+            "description": "订单号",
             "schema": {
               "type": "string"
-            }
+            },
+            "allowEmptyValue": true
           },
           {
-            "description": "审核状态：all为全部，pending为待审核，auditing为审核中，approved为批准，disapproved为拒绝",
             "name": "status",
             "in": "query",
             "required": true,
+            "description": "审核状态：all为全部，pending为待审核，auditing为审核中，approved为批准，disapproved为拒绝",
             "schema": {
               "type": "string",
               "enum": [
@@ -9615,13 +9643,14 @@
                                 "type": "string"
                               },
                               "server_type": {
-                                "description": "交易服务器类型",
+                                "description": "交易服务器类型，用作账户类型",
                                 "type": "string",
                                 "enum": [
                                   "MT4-Live",
                                   "MT4-Demo",
                                   "MT5-Live",
-                                  "MT5-Demo"
+                                  "MT5-Demo",
+                                  "Wallet"
                                 ]
                               }
                             }
@@ -9663,13 +9692,14 @@
                                 "type": "string"
                               },
                               "server_type": {
-                                "description": "交易服务器类型",
+                                "description": "交易服务器类型，用作账户类型",
                                 "type": "string",
                                 "enum": [
                                   "MT4-Live",
                                   "MT4-Demo",
                                   "MT5-Live",
-                                  "MT5-Demo"
+                                  "MT5-Demo",
+                                  "Wallet"
                                 ]
                               }
                             }
@@ -9945,7 +9975,7 @@
       "post": {
         "description": "申请交易账号-用户ID从token获取",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "申请交易账号-用户ID从token获取-交易接口",
         "operationId": "tradingCreateTradingAccount",
@@ -10027,7 +10057,7 @@
       "get": {
         "description": "查询交易账号",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询交易账号-交易接口",
         "operationId": "tradingGetTradingAccount",
@@ -10121,7 +10151,7 @@
       "get": {
         "description": "查询是否允许开通模拟账户",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询是否允许开通模拟账户-交易接口",
         "operationId": "tradingGetDemoTradingAccountAvailability",
@@ -10149,7 +10179,7 @@
       "get": {
         "description": "查询交易账户可用杠杆",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询交易账户可用杠杆-交易接口",
         "operationId": "tradingGetTradingAccountLeverageOptions",
@@ -10191,7 +10221,7 @@
       "get": {
         "description": "查询交易账号杠杆更新状态",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询交易账号杠杆更新状态-交易接口",
         "operationId": "tradingGetTradingAccountLeverageUpdateStatus",
@@ -10234,7 +10264,7 @@
       "get": {
         "description": "查询可用交易账号类型列表-通过token获取用户ID匹配注册流程再查询",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询可用交易账号类型列表-通过token获取用户ID匹配注册流程再查询-交易接口",
         "operationId": "tradingListAvailableTradingAccountTypeOptions",
@@ -10346,7 +10376,7 @@
       "get": {
         "description": "查询交易账号列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询交易账号列表-交易接口",
         "operationId": "tradingListTradingAccount",
@@ -10485,7 +10515,7 @@
       "get": {
         "description": "查询交易账号选项列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "查询交易账号选项列表-交易接口",
         "operationId": "tradingListTradingAccountOptions",
@@ -10548,7 +10578,7 @@
       "get": {
         "description": "获取可用交易平台选项列表",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "获取可用交易平台选项列表-交易接口",
         "operationId": "tradingListTradingPlatform",
@@ -10581,7 +10611,7 @@
       "post": {
         "description": "更新交易账号杠杆",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "更新交易账号杠杆-交易接口",
         "operationId": "tradingUpdateTradingAccountLeverage",
@@ -10631,7 +10661,7 @@
       "post": {
         "description": "更新交易账号密码",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "更新交易账号密码-交易接口",
         "operationId": "tradingUpdateTradingAccountPassword",
@@ -10685,7 +10715,7 @@
       "get": {
         "description": "检查当前用户是否有待审核的出金订单",
         "tags": [
-          "Client接口(65)"
+          "Client接口(68)"
         ],
         "summary": "检查当前用户是否有待审核的出金订单-交易接口",
         "operationId": "tradingCheckPendingWithdrawal",
@@ -10899,6 +10929,249 @@
                           }
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/client/wallet/get-balance": {
+      "get": {
+        "description": "获取钱包余额",
+        "summary": "获取钱包余额-钱包管理",
+        "operationId": "walletGetWalletBalance",
+        "tags": [
+          "Client接口(68)"
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "balance": {
+                      "description": "钱包余额",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/report/wallet-transaction/list": {
+      "get": {
+        "description": "查询钱包流水报表",
+        "summary": "查询钱包流水报表-报表接口",
+        "operationId": "reportListWalletTransactionReport",
+        "tags": [
+          "Client接口(68)"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "description": "页码",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": true,
+            "description": "每页数量",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "serial_number",
+            "in": "query",
+            "required": false,
+            "description": "钱包流水编号",
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": true
+          },
+          {
+            "name": "order_number",
+            "in": "query",
+            "required": false,
+            "description": "交易订单号",
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": true
+          },
+          {
+            "name": "account",
+            "in": "query",
+            "required": false,
+            "description": "交易账号",
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": true
+          },
+          {
+            "name": "start_time",
+            "in": "query",
+            "required": false,
+            "description": "自定义开始时间（格式：YYYY-MM-DD HH:MM:SS）",
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": true
+          },
+          {
+            "name": "end_time",
+            "in": "query",
+            "required": false,
+            "description": "自定义结束时间（格式：YYYY-MM-DD HH:MM:SS）",
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "serial_number",
+                          "type",
+                          "amount",
+                          "order_number",
+                          "create_time"
+                        ],
+                        "properties": {
+                          "amount": {
+                            "description": "金额",
+                            "type": "string"
+                          },
+                          "create_time": {
+                            "description": "流水写入时间",
+                            "type": "string"
+                          },
+                          "order_number": {
+                            "description": "交易订单号",
+                            "type": "string"
+                          },
+                          "serial_number": {
+                            "description": "钱包流水编号，采用CRM内生成订单号格式",
+                            "type": "string"
+                          },
+                          "type": {
+                            "description": "流水类型",
+                            "type": "string",
+                            "enum": [
+                              "Cashback",
+                              "Transfer",
+                              "Withdrawal"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/report/wallet-transaction/export": {
+      "post": {
+        "description": "导出钱包流水报表",
+        "summary": "导出钱包流水报表-报表接口",
+        "operationId": "reportExportWalletTransactionReport",
+        "tags": [
+          "Client接口(68)"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "page",
+                  "size"
+                ],
+                "properties": {
+                  "account": {
+                    "description": "交易账号",
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "description": "自定义结束时间（格式：YYYY-MM-DD HH:MM:SS）",
+                    "type": "string"
+                  },
+                  "order_number": {
+                    "description": "交易订单号",
+                    "type": "string"
+                  },
+                  "page": {
+                    "description": "页码",
+                    "type": "integer",
+                    "default": 1,
+                    "example": 1
+                  },
+                  "serial_number": {
+                    "description": "钱包流水编号",
+                    "type": "string"
+                  },
+                  "size": {
+                    "description": "每页数量",
+                    "type": "integer",
+                    "default": 20,
+                    "example": 20
+                  },
+                  "start_time": {
+                    "description": "自定义开始时间（格式：YYYY-MM-DD HH:MM:SS）",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "download_url": {
+                      "description": "文件下载链接",
+                      "type": "string"
                     }
                   }
                 }
