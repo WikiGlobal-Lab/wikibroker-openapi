@@ -2,6 +2,11 @@
 
 GO_SDK_VERSION = 1.0.0
 
+doc:
+	@echo "生成可视化文档..."
+	@cd docs && npx @redocly/cli build-docs openapi.json -o index.html
+	@echo "可视化文档生成完成！"
+
 build:
 	@echo "清理已构建SDK包..."
 	@echo ""
