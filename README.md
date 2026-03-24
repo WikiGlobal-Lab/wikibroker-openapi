@@ -476,3 +476,16 @@ $client->sendRequest($request);
    1. 将请求查询参数按`key`的字典序升序排列，对于相同`key`则再按`value`的字典序升序排列，然后按`{key}={value}`的格式用`&`拼接，构成规范化查询字符串`canonical_query`。
    2. 计算请求体的`sha256`哈希并转换为16进制编码字符串`body_hash`。
    3. 用换行符拼接大写请求方法、请求相对路径、`canonical_query`、`X-Api-Key`、`X-Timestamp`、`X-Nonce`、`body_hash`，然后生成`hmac-sha256`哈希并转换为16进制编码字符串，得到请求签名`X-Signature`。
+
+## 兼容性说明
+
+| SDK包 | 开发语言版本 |
+| --- | --- |
+| JavaScript SDK | Node 22 |
+| Python SDK | Python 3.12 |
+| Golang SDK | Go 1.23 |
+| Java SDK | Java 21 |
+| PHP SDK | PHP 8.3 |
+| .NET SDK | C# 12 |
+| Dart SDK | 待定 |
+| Swift SDK | 待定 |
