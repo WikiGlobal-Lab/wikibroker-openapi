@@ -1,8 +1,14 @@
-.venv
-.uv
-dist
-__pycache__
-.pytest_cache
-.mypy_cache
+# 编辑器配置
+.vscode/
+
+# 构建产物
+dist/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
 *.pyc
 *.egg-info
+
+# 开发依赖项
+.venv/
+.uv

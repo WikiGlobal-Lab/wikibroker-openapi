@@ -1,2 +1,5 @@
-target
-.idea
+# 编辑器配置
+.idea/
+
+# 构建产物
+target/
