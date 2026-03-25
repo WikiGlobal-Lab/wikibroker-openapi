@@ -462,6 +462,12 @@ $request = $rawClient->createRequest(
 $client->sendRequest($request);
 ```
 
+#### `C#` 接入（开发中）
+
+#### `Dart` 接入（开发中）
+
+#### `Swift` 接入（开发中）
+
 ### 通过API接入
 
 如果你使用的编程语言没有可用的SDK，可以按照以下方式自行编写接入代码。
