@@ -2,11 +2,9 @@ import type { HeadersLike, RequestLike } from "../common/interfaces.js";
 import { isRequestUsePostMethod } from "../common/utils.js";
 
 class NativeRequest implements RequestLike {
-  private raw: Request;
   public headers: HeadersLike;
 
-  constructor(raw: Request) {
-    this.raw = raw;
+  constructor(private raw: Request) {
     this.headers = {
       set: (field: string, value: string) => this.raw.headers.set(field, value),
       get: (f) => this.raw.headers.get(f) ?? "",

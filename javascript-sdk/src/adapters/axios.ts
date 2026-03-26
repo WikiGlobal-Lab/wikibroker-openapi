@@ -4,12 +4,13 @@ import { isRequestUsePostMethod, newUrlWithFakeBase } from "../common/utils.js";
 import { QueryParseMode } from "../common/enums.js";
 
 class AxiosRequest implements RequestLike {
-  private raw: InternalAxiosRequestConfig<string>;
   public headers: HeadersLike;
   public url: string;
 
-  constructor(raw: InternalAxiosRequestConfig<string>, mode: QueryParseMode) {
-    this.raw = raw;
+  constructor(
+    private raw: InternalAxiosRequestConfig<string>,
+    mode: QueryParseMode,
+  ) {
     this.headers = {
       set: (field: string, value: string) => {
         this.raw.headers.set(field, value, true);

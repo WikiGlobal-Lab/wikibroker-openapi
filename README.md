@@ -27,17 +27,17 @@ WikiBroker的OpenAPI接口都会校验请求
 <details>
 <summary>npm</summary>
 
-    npm install ./wikibroker-openapi-js-sdk-1.0.0.tgz
+    npm install ./wikibroker-openapi-js-sdk-1.0.1.tgz
 </details>
 <details>
 <summary>yarn</summary>
 
-    yarn add ./wikibroker-openapi-js-sdk-1.0.0.tgz
+    yarn add ./wikibroker-openapi-js-sdk-1.0.1.tgz
 </details>
 <details>
 <summary>pnpm</summary>
 
-    pnpm add ./wikibroker-openapi-js-sdk-1.0.0.tgz
+    pnpm add ./wikibroker-openapi-js-sdk-1.0.1.tgz
 </details>
 <br/>
 

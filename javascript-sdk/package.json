@@ -1,6 +1,6 @@
 {
   "name": "wikibroker-openapi-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "WikiBroker OpenAPI SDK",
   "engines": {
     "node": ">=22.0.0"
