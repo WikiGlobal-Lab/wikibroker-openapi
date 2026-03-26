@@ -1,11 +1,23 @@
+.PHONY: init-js init-go init-py init-java init-php
+
+init-js:
+	@cd javascript-sdk && pnpm install
+
+init-go:
+	@cd golang-sdk && go mod tidy
+
+init-py:
+	@cd python-sdk && uv sync --all-groups
+
+init-java:
+	@cd java-sdk && mvn install
+
+init-php:
+	@cd php-sdk && composer install
+
 .PHONY: build build-js build-go build-py build-java build-php
 
 GO_SDK_VERSION = 1.0.0
-
-doc:
-	@echo "生成可视化文档..."
-	@cd docs && npx @redocly/cli build-docs openapi.json -o index.html
-	@echo "可视化文档生成完成！"
 
 build:
 	@echo "清理已构建SDK包..."
@@ -14,66 +26,61 @@ build:
 	@echo ""
 	@echo "开始构建所有SDK..."
 	@echo ""
-	@$(MAKE) build-js && $(MAKE) build-go && $(MAKE) build-py && $(MAKE) build-java && $(MAKE) build-php
+	@echo "[1/5] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/5] JavaScript SDK 构建完成 ✓"
+	@echo "[2/5] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/5] Go SDK 构建完成 ✓"
+	@echo "[3/5] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/5] Python SDK 构建完成 ✓"
+	@echo "[4/5] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/5] Java SDK 构建完成 ✓"
+	@echo "[5/5] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/5] PHP SDK 构建完成 ✓"
 	@echo ""
 	@echo "所有SDK构建成功！"
 
-build-js:
-	@echo "[1/5] 开始构建 JavaScript SDK..."
+build-js: init-js
 	@cd javascript-sdk && rm -rf dist && pnpm pack && rename 's/openapi-sdk/openapi-js-sdk/' wikibroker-*.tgz && mv wikibroker-*.tgz ..
-	@echo "[1/5] JavaScript SDK 构建完成 ✓"
-	@echo ""
 
-build-go:
-	@echo "[2/5] 开始构建 Go SDK..."
+build-go: init-go
 	@cp -r golang-sdk wikibroker_openapi_sdk && tar zcf wikibroker-openapi-go-sdk-$(GO_SDK_VERSION).tgz wikibroker_openapi_sdk && rm -rf wikibroker_openapi_sdk
-	@echo "[2/5] Go SDK 构建完成 ✓"
-	@echo ""
 
-build-py:
-	@echo "[3/5] 开始构建 Python SDK..."
+build-py: init-py
 	@cd python-sdk && rm -rf dist && uv build && mv dist/wikibroker*.whl ..
-	@echo "[3/5] Python SDK 构建完成 ✓"
-	@echo ""
 
-build-java:
-	@echo "[4/5] 开始构建 Java SDK..."
+build-java: init-java
 	@cd java-sdk && rm -rf target && mvn package && mv target/wikibroker*.jar ..
-	@echo "[4/5] Java SDK 构建完成 ✓"
-	@echo ""
 
-build-php:
-	@echo "[5/5] 开始构建 PHP SDK..."
+build-php: init-php
 	@cd php-sdk && composer build && rename 's/wikiglobal-wikibroker-openapi-sdk/wikibroker-openapi-php-sdk/' wikiglobal*.zip && mv wikibroker*.zip ..
-	@echo "[5/5] PHP SDK 构建完成 ✓"
-	@echo ""
 
 .PHONY: test test-js test-go test-py test-java test-php
 
 test:
 	@echo "运行所有 SDK 测试..."
-	@$(MAKE) test-js && $(MAKE) test-go && $(MAKE) test-py && $(MAKE) test-java && $(MAKE) test-php
+	@echo "[1/5] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/5] JavaScript SDK 测试通过 ✓"
+	@echo "[2/5] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/5] Go SDK 测试通过 ✓"
+	@echo "[3/5] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/5] Python SDK 测试通过 ✓"
+	@echo "[4/5] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/5] Java SDK 测试通过 ✓"
+	@echo "[5/5] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/5] PHP SDK 测试通过 ✓"
 	@echo "所有 SDK 测试完成！"
 
-test-js:
-	@echo "[1/5] 运行 JavaScript SDK 测试..."
+test-js: init-js
 	@cd javascript-sdk && pnpm test
 
-test-go:
-	@echo "[2/5] 运行 Go SDK 测试..."
+test-go: init-go
 	@cd golang-sdk && go test -v
 
-test-py:
-	@echo "[3/5] 运行 Python SDK 测试..."
+test-py: init-py
 	@cd python-sdk && uv run pytest
 
-test-java:
-	@echo "[4/5] 运行 Java SDK 测试..."
+test-java: init-java
 	@cd java-sdk && mvn test
 
-test-php:
-	@echo "[5/5] 运行 PHP SDK 测试..."
+test-php: init-php
 	@cd php-sdk && composer test
+
+.PHONY: doc
+
+doc:
+	@echo "生成可视化文档..."
+	@cd docs && npx @redocly/cli build-docs openapi.json -o index.html
+	@echo "可视化文档生成完成！"
 
 .PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php
 
