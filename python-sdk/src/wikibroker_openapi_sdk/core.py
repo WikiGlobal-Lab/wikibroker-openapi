@@ -1,20 +1,11 @@
-import hmac
-import hashlib
 from .common.types import Request
 from .common.enums import CustomHeaders
+from .common.hash import hmac_sha256, sha256_hash
 from urllib.parse import urlparse, parse_qsl
 
 
 def generate_signature(key: str, message: str) -> str:
-    return (
-        hmac.new(
-            key.encode("utf-8"),
-            message.encode("utf-8"),
-            hashlib.sha256,
-        )
-        .digest()
-        .hex()
-    )
+    return hmac_sha256(key.encode("utf-8"), message.encode("utf-8")).hex()
 
 
 def generate_canonical_string(req: Request) -> str:
@@ -40,8 +31,7 @@ def generate_canonical_string(req: Request) -> str:
 
 def calculate_body_hash(req: Request) -> str:
     body = req.data if req.method == "POST" else "".encode("utf-8")
-    print(f"{body =}")
-    return hashlib.sha256(body).digest().hex()
+    return sha256_hash(body).hex()
 
 
 def build_canonical_query(req: Request) -> str:
