@@ -17,7 +17,7 @@ init-php:
 
 .PHONY: build build-js build-go build-py build-java build-php
 
-GO_SDK_VERSION = 1.0.0
+GO_SDK_VERSION = 1.0.1
 
 build:
 	@echo "清理已构建SDK包..."

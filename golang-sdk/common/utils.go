@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"unsafe"
 )
 
 func ReadRequestBody(r *http.Request) (data []byte, err error) {
@@ -45,4 +46,8 @@ func MapItems[K comparable, V any](m map[K]V) []*MapItem[K, V] {
 
 func SortByKey[K cmp.Ordered, V any](a, b *MapItem[K, V]) int {
 	return cmp.Compare(a.Key, b.Key)
+}
+
+func Bytes(s string) []byte {
+	return unsafe.Slice(unsafe.StringData(s), len(s))
 }

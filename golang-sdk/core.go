@@ -1,8 +1,6 @@
 package wikibroker_openapi_sdk
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"net/http"
@@ -11,10 +9,12 @@ import (
 	"wikibroker_openapi_sdk/common"
 )
 
-func generateSignature(key, message string) string {
-	h := hmac.New(sha256.New, []byte(key))
-	h.Write([]byte(message))
-	return hex.EncodeToString(h.Sum(nil))
+func generateSignature(key, message string) (string, error) {
+	src, err := common.HmacSha256(common.Bytes(key), common.Bytes(message))
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(src), nil
 }
 
 func generateCanonicalString(req *http.Request) (string, error) {
@@ -47,9 +47,11 @@ func calculateBodyHash(req *http.Request) (hash string, err error) {
 			return "", err
 		}
 	}
-	h := sha256.New()
-	h.Write(body)
-	return hex.EncodeToString(h.Sum(nil)), nil
+	src, err := common.Sha256Hash(body)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(src), nil
 }
 
 func buildCanonicalQuery(req *http.Request) string {

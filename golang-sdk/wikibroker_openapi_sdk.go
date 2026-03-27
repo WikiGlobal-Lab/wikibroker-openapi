@@ -36,7 +36,10 @@ func Sign(req *http.Request, key string) error {
 	if err != nil {
 		return err
 	}
-	signature := generateSignature(key, canonicalString)
+	signature, err := generateSignature(key, canonicalString)
+	if err != nil {
+		return err
+	}
 	req.Header.Add(common.CustomHeaderSignature.String(), signature)
 	return nil
 }
