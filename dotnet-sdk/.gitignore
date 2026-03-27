@@ -1,5 +1,6 @@
 # 编辑器配置
 .idea
+*.DotSettings.user
 
 # 构建产物
 bin/
