@@ -16,7 +16,7 @@ namespace WikiBroker.OpenApi.Sdk
             req.Headers.Add(CustomHeaders.Nonce.Value, nonce.ToString());
         }
 
-        public static async Task sign(
+        public static async Task Sign(
             HttpRequestMessage req,
             string key
         )

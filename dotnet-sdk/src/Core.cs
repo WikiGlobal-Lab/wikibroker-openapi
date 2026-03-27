@@ -1,3 +1,4 @@
+using System.Text;
 using WikiBroker.OpenApi.Sdk.Common;
 using WikiBroker.OpenApi.Sdk.Common.Enums;
 
@@ -7,7 +8,11 @@ public static class Core
 {
     public static string GenerateSignature(string key, string message)
     {
-        return Convert.ToHexString(Hash.HmacSha256(key, message));
+        return Convert.ToHexString(Hash.HmacSha256(
+                Encoding.UTF8.GetBytes(key),
+                Encoding.UTF8.GetBytes(message)
+            )
+        );
     }
 
     public static async Task<string> GenerateCanonicalString(HttpRequestMessage req)
@@ -24,12 +29,7 @@ public static class Core
 
     private static async Task<string> CalculateBodyHash(HttpRequestMessage req)
     {
-        var body = "";
-        if (req.Method.Equals(HttpMethod.Post))
-        {
-            body = await (req.Content?.ReadAsStringAsync() ?? Task.FromResult(""));
-        }
-
+        var body = await Utils.ReadRequestBody(req);
         var hash = Hash.Sha256Hash(body);
         return Convert.ToHexString(hash);
     }

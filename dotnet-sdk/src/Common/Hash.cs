@@ -5,15 +5,14 @@ namespace WikiBroker.OpenApi.Sdk.Common;
 
 public static class Hash
 {
-    public static byte[] HmacSha256(string key, string message)
+    public static byte[] HmacSha256(byte[] key, byte[] message)
     {
-        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key));
-        var data = Encoding.UTF8.GetBytes(message);
-        return hmac.ComputeHash(data);
+        using var hmac = new HMACSHA256(key);
+        return hmac.ComputeHash(message);
     }
 
-    public static byte[] Sha256Hash(string message)
+    public static byte[] Sha256Hash(byte[] message)
     {
-        return SHA256.HashData(Encoding.UTF8.GetBytes(message));
+        return SHA256.HashData(message);
     }
 }
