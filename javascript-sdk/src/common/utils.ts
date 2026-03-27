@@ -11,3 +11,8 @@ export function newUrlWithFakeBase(url: string) {
 export function isRequestUsePostMethod<T extends string>(method: T) {
   return method.toUpperCase() === "POST";
 }
+
+const encoder = new TextEncoder();
+export function bytes(s: string) {
+  return encoder.encode(s);
+}
