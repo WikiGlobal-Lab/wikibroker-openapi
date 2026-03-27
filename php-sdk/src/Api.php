@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace WikibrokerOpenapiSdk;
 
 use DateTime;
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Ramsey\Uuid\Uuid;
 use WikibrokerOpenapiSdk\Adapters\GuzzleSignMiddleware;
