@@ -11,8 +11,10 @@ use WikibrokerOpenapiSdk\Adapters\GuzzleSignMiddleware;
 use WikibrokerOpenapiSdk\Adapters\PsrHttpClientWithSign;
 use WikibrokerOpenapiSdk\Enum\CustomHeaders;
 
-class Api {
-    private function __construct() {
+class Api
+{
+    private function __construct()
+    {
     }
 
     public static function withXHeaders(
@@ -27,13 +29,15 @@ class Api {
             ->withHeader(CustomHeaders::Nonce->value, Uuid::fromString($nonce)->toString());
     }
 
-    public static function withSign(RequestInterface $req, string $key): RequestInterface {
+    public static function withSign(RequestInterface $req, string $key): RequestInterface
+    {
         $canonicalString = Core::generateCanonicalString($req);
         $signature = Core::generateSignature($key, $canonicalString);
         return $req->withHeader(CustomHeaders::Signature->value, $signature);
     }
 
-    public static function createGuzzleSignMiddleware(string $apiKey, string $apiSecret): callable {
+    public static function createGuzzleSignMiddleware(string $apiKey, string $apiSecret): callable
+    {
         return new GuzzleSignMiddleware(
             $apiKey,
             $apiSecret,
@@ -44,7 +48,8 @@ class Api {
         );
     }
 
-    public static function createPsrHttpClientWithSign(string $apiKey, string $apiSecret): PsrHttpClientWithSign {
+    public static function createPsrHttpClientWithSign(string $apiKey, string $apiSecret): PsrHttpClientWithSign
+    {
         return new PsrHttpClientWithSign(
             $apiKey,
             $apiSecret,

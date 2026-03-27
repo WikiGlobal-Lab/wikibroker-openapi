@@ -11,11 +11,13 @@ use Symfony\Component\HttpClient\Psr18Client;
 use WikibrokerOpenapiSdk\Api;
 use WikibrokerOpenapiSdk\Enum\CustomHeaders;
 
-final class ApiTest extends TestCase {
+final class ApiTest extends TestCase
+{
     private static $baseURL = "https://api.example.com";
     private static $path = "test?q1=c&q2=b&q1=a";
 
-    private static function url(): string {
+    private static function url(): string
+    {
         return self::$baseURL . '/' . self::$path;
     }
 
@@ -27,7 +29,8 @@ final class ApiTest extends TestCase {
     private static $timestamp = 1798115622000;
     private static $expectedSignature = "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4";
 
-    public function testSymfony(): void {
+    public function testSymfony(): void
+    {
         $client = new Psr18Client();
         $body = $client->createStream(json_encode(self::$body));
         $request = $client->createRequest(self::$method, self::url())->withBody($body);
@@ -43,7 +46,8 @@ final class ApiTest extends TestCase {
         $this->assertSame(self::$expectedSignature, $actualSignature);
     }
 
-    public function testGuzzle(): void {
+    public function testGuzzle(): void
+    {
         $body = json_encode(self::$body);
         $request = new Request(self::$method, self::url(), [], $body);
         $timestamp = DateTime::createFromFormat('U.v', sprintf('%d.%03d', intdiv(self::$timestamp, 1000), self::$timestamp % 1000));

@@ -8,7 +8,8 @@ use Closure;
 use DateTimeInterface;
 use Psr\Http\Message\RequestInterface;
 
-abstract class Adapter {
+abstract class Adapter
+{
     /**
      * @param string $apiKey
      * @param string $apiSecret
@@ -27,7 +28,8 @@ abstract class Adapter {
         private Closure $idGenerator
     ) {
     }
-    protected function signRequest(RequestInterface $request): RequestInterface {
+    protected function signRequest(RequestInterface $request): RequestInterface
+    {
         $request = ($this->withHeaders)(
             $request,
             $this->apiKey,
