@@ -12,6 +12,7 @@ import org.jspecify.annotations.NonNull;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -26,7 +27,10 @@ public final class Core {
         @NonNull String key,
         @NonNull String message
     ) throws NoSuchAlgorithmException, InvalidKeyException {
-        return Hex.encodeHexString(Hash.hmacSha256(key, message));
+        return Hex.encodeHexString(Hash.hmacSha256(
+            key.getBytes(StandardCharsets.UTF_8),
+            message.getBytes(StandardCharsets.UTF_8)
+        ));
     }
 
     public @NonNull String generateCanonicalString(
@@ -44,7 +48,7 @@ public final class Core {
 
     private @NonNull String calculateBodyHash(@NonNull RequestReader req) throws NoSuchAlgorithmException {
         final var body = Utils.isRequestUsePostMethod(req) ? req.body() : "";
-        final var hash = Hash.sha256Hash(body);
+        final var hash = Hash.sha256Hash(body.getBytes(StandardCharsets.UTF_8));
         return Hex.encodeHexString(hash);
     }
 
