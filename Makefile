@@ -49,15 +49,16 @@ build-java: init-java
 build-php: init-php
 	@cd php-sdk && composer build && rename 's/wikiglobal-wikibroker-openapi-sdk/wikibroker-openapi-php-sdk/' wikiglobal*.zip && mv wikibroker*.zip ..
 
-.PHONY: test test-js test-go test-py test-java test-php
+.PHONY: test test-js test-go test-py test-java test-php test-cs
 
 test:
 	@echo "运行所有 SDK 测试..."
-	@echo "[1/5] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/5] JavaScript SDK 测试通过 ✓"
-	@echo "[2/5] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/5] Go SDK 测试通过 ✓"
-	@echo "[3/5] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/5] Python SDK 测试通过 ✓"
-	@echo "[4/5] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/5] Java SDK 测试通过 ✓"
-	@echo "[5/5] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/5] PHP SDK 测试通过 ✓"
+	@echo "[1/6] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/6] JavaScript SDK 测试通过 ✓"
+	@echo "[2/6] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/6] Go SDK 测试通过 ✓"
+	@echo "[3/6] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/6] Python SDK 测试通过 ✓"
+	@echo "[4/6] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/6] Java SDK 测试通过 ✓"
+	@echo "[5/6] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/6] PHP SDK 测试通过 ✓"
+	@echo "[6/6] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/6] .NET SDK 测试通过 ✓"
 	@echo "所有 SDK 测试完成！"
 
 test-js: init-js
@@ -75,6 +76,9 @@ test-java: init-java
 test-php: init-php
 	@cd php-sdk && composer test
 
+test-cs:
+	@cd dotnet-sdk/tests && dotnet test
+
 .PHONY: doc
 
 doc:
@@ -82,7 +86,7 @@ doc:
 	@cd docs && npx @redocly/cli build-docs openapi.json -o index.html
 	@echo "可视化文档生成完成！"
 
-.PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php
+.PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php cloc-cs
 
 cloc:
 	@echo "统计所有SDK代码行数..."; \
@@ -91,7 +95,8 @@ cloc:
 	PY=$$($(MAKE) cloc-py | grep "Python  " | awk '{print $$1 "\t" $$5}'); \
 	JAVA=$$($(MAKE) cloc-java | grep "Java  " | awk '{print $$1 "\t" $$5}'); \
 	PHP=$$($(MAKE) cloc-php | grep "PHP  " | awk '{print $$1 "\t" $$5}'); \
-	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP
+	CS=$$($(MAKE) cloc-cs | grep "C#  " | awk '{print $$1 "\t" $$5}'); \
+	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS
 	@echo "所有 SDK 代码行数统计完毕！"
 
 cloc-js:
@@ -113,3 +118,7 @@ cloc-java:
 cloc-php:
 	@echo "统计 PHP SDK 代码行数..."
 	@cd php-sdk && cloc src
+
+cloc-cs:
+	@echo "统计 .NET SDK 代码行数..."
+	@cd dotnet-sdk && cloc src
