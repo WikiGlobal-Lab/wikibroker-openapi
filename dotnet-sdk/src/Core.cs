@@ -12,18 +12,18 @@ public static class Core
                 Encoding.UTF8.GetBytes(key),
                 Encoding.UTF8.GetBytes(message)
             )
-        );
+        ).ToLower();
     }
 
     public static async Task<string> GenerateCanonicalString(HttpRequestMessage req)
     {
         var method = req.Method.Method;
         var path = req.RequestUri?.AbsolutePath ?? "";
-        var canonicalQuery = Core.BuildCanonicalQuery(req);
+        var canonicalQuery = BuildCanonicalQuery(req);
         var apiKey = req.Headers.GetValues(CustomHeaders.ApiKey.Value).ElementAt(0);
         var timestamp = req.Headers.GetValues(CustomHeaders.TimeStamp.Value).ElementAt(0);
         var nonce = req.Headers.GetValues(CustomHeaders.Nonce.Value).ElementAt(0);
-        var bodyHash = await Core.CalculateBodyHash(req);
+        var bodyHash = await CalculateBodyHash(req);
         return string.Join("\n", method, path, canonicalQuery, apiKey, timestamp, nonce, bodyHash);
     }
 
@@ -31,18 +31,18 @@ public static class Core
     {
         var body = await Utils.ReadRequestBody(req);
         var hash = Hash.Sha256Hash(body);
-        return Convert.ToHexString(hash);
+        return Convert.ToHexString(hash).ToLower();
     }
 
     private static string BuildCanonicalQuery(HttpRequestMessage req)
     {
-        var queryString = req.RequestUri?.Query ?? "";
+        var queryString = req.RequestUri?.Query.TrimStart('?') ?? "";
         var query = queryString.Split("&")
             .Select(pair => pair.Split("="))
             .GroupBy(arr => arr[0])
             .ToDictionary(
                 pair => pair.Key,
-                pair => pair.ToList()
+                pair => pair.Select(arr => arr[1]).ToList()
             );
         foreach (var pair in query)
         {
