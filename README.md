@@ -467,6 +467,7 @@ $client->sendRequest($request);
 **安装**
 
 ```bash
+# 把WikiBroker.OpenApi.Sdk.0.1.0-alpha.nupkg放在项目根目录下并执行以下命令
 dotnet add package WikiBroker.OpenApi.Sdk --source ./ --version 0.1.0-alpha
 ```
 
