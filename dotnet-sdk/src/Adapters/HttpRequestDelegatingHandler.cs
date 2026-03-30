@@ -1,25 +1,20 @@
 namespace WikiBroker.OpenApi.Sdk.Adapters;
 
-public class HttpRequestDelegatingHandler : DelegatingHandler
+public class HttpRequestDelegatingHandler(
+    HttpMessageHandler innerHandler,
+    Guid apiKey,
+    string apiSecret,
+    Action<HttpRequestMessage, Guid, DateTimeOffset, Guid> loadHeaders,
+    Func<HttpRequestMessage, string, Task> sign,
+    Func<DateTimeOffset> timestampGenerator,
+    Func<Guid> idGenerator
+) : DelegatingHandler(innerHandler)
 {
-    private readonly Func<HttpRequestMessage, Task> _onRequest;
-
-    public HttpRequestDelegatingHandler(
-        HttpMessageHandler innerHandler,
-        Guid apiKey,
-        string apiSecret,
-        Action<HttpRequestMessage, Guid, DateTimeOffset, Guid> loadHeaders,
-        Func<HttpRequestMessage, string, Task> sign,
-        Func<DateTimeOffset> timestampGenerator,
-        Func<Guid> idGenerator
-    ) : base(innerHandler)
+    private readonly Func<HttpRequestMessage, Task> _onRequest = async (r) =>
     {
-        _onRequest = async (r) =>
-        {
-            loadHeaders(r, apiKey, timestampGenerator(), idGenerator());
-            await sign(r, apiSecret);
-        };
-    }
+        loadHeaders(r, apiKey, timestampGenerator(), idGenerator());
+        await sign(r, apiSecret);
+    };
 
     protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
     {
