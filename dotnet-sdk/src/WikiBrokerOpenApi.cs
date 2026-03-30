@@ -1,4 +1,5 @@
-﻿using WikiBroker.OpenApi.Sdk.Common.Enums;
+﻿using WikiBroker.OpenApi.Sdk.Adapters;
+using WikiBroker.OpenApi.Sdk.Common.Enums;
 
 namespace WikiBroker.OpenApi.Sdk
 {
@@ -24,6 +25,21 @@ namespace WikiBroker.OpenApi.Sdk
             var canonicalString = await Core.GenerateCanonicalString(req);
             var signature = Core.GenerateSignature(key, canonicalString);
             req.Headers.Add(CustomHeaders.Signature.Value, signature);
+        }
+
+        public static Func<HttpMessageHandler, DelegatingHandler> CreateDelegatingHandlerConstructor(Guid apiKey,
+            string apiSecret)
+        {
+            return (h) =>
+                new HttpRequestDelegatingHandler(
+                    h,
+                    apiKey,
+                    apiSecret,
+                    AddXHeaders,
+                    Sign,
+                    () => DateTimeOffset.UtcNow,
+                    Guid.NewGuid
+                );
         }
     }
 }
