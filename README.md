@@ -89,7 +89,7 @@ axios.post(
 **安装**
 
 ```bash
-tar zxf wikibroker-openapi-go-sdk-1.0.0.tgz
+tar zxf wikibroker-openapi-go-sdk-1.0.1.tgz
 go mod edit -replace=wikibroker_openapi_sdk=./wikibroker_openapi_sdk
 go get wikibroker_openapi_sdk
 ```
@@ -186,17 +186,17 @@ agent.Post("https://api.example.com/test?q1=c&q2=b&q1=a").Send(body).End()
 <details>
 <summary>pip</summary>
 
-    pip install ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
+    pip install ./wikibroker_openapi_sdk-1.0.1-py3-none-any.whl
 </details>
 <details>
 <summary>poetry</summary>
 
-    poetry add ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
+    poetry add ./wikibroker_openapi_sdk-1.0.1-py3-none-any.whl
 </details>
 <details>
 <summary>uv</summary>
 
-    uv add ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
+    uv add ./wikibroker_openapi_sdk-1.0.1-py3-none-any.whl
 </details>
 <br/>
 
