@@ -15,22 +15,23 @@ init-java:
 init-php:
 	@cd php-sdk && composer install
 
-.PHONY: build build-js build-go build-py build-java build-php
+.PHONY: build build-js build-go build-py build-java build-php build-cs
 
 GO_SDK_VERSION = 1.0.1
 
 build:
 	@echo "清理已构建SDK包..."
 	@echo ""
-	@rm -rf wikibroker*.tgz wikibroker*.whl wikibroker*.jar wikibroker*.zip
+	@rm -rf wikibroker*.tgz wikibroker*.whl wikibroker*.jar wikibroker*.zip WikiBroker*.nupkg
 	@echo ""
 	@echo "开始构建所有SDK..."
 	@echo ""
-	@echo "[1/5] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/5] JavaScript SDK 构建完成 ✓"
-	@echo "[2/5] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/5] Go SDK 构建完成 ✓"
-	@echo "[3/5] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/5] Python SDK 构建完成 ✓"
-	@echo "[4/5] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/5] Java SDK 构建完成 ✓"
-	@echo "[5/5] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/5] PHP SDK 构建完成 ✓"
+	@echo "[1/6] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/6] JavaScript SDK 构建完成 ✓"
+	@echo "[2/6] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/6] Go SDK 构建完成 ✓"
+	@echo "[3/6] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/6] Python SDK 构建完成 ✓"
+	@echo "[4/6] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/6] Java SDK 构建完成 ✓"
+	@echo "[5/6] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/6] PHP SDK 构建完成 ✓"
+	@echo "[6/6] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/6] .NET SDK 构建完成 ✓"
 	@echo ""
 	@echo "所有SDK构建成功！"
 
@@ -48,6 +49,9 @@ build-java: init-java
 
 build-php: init-php
 	@cd php-sdk && composer build && rename 's/wikiglobal-wikibroker-openapi-sdk/wikibroker-openapi-php-sdk/' wikiglobal*.zip && mv wikibroker*.zip ..
+
+build-cs:
+	@cd dotnet-sdk/src && rm -rf bin/ obj/ && dotnet pack && mv bin/Release/WikiBroker*.nupkg ../..
 
 .PHONY: test test-js test-go test-py test-java test-php test-cs
 

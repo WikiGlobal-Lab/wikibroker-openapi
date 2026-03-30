@@ -4,6 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>WikiBroker.OpenApi.Sdk</PackageId>
+    <Version>0.1.0-alpha</Version>
+    <Authors>Auston</Authors>
+    <Company>WikiGlobal</Company>
   </PropertyGroup>
 
   <ItemGroup>
