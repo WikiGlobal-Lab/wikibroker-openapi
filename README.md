@@ -462,7 +462,33 @@ $request = $rawClient->createRequest(
 $client->sendRequest($request);
 ```
 
-#### `C#` 接入（开发中）
+#### `C#` 接入
+
+**安装**
+
+```bash
+dotnet add package WikiBroker.OpenApi.Sdk --source ./ --version 0.1.0-alpha
+```
+
+**示例**
+
+`System.Net.Http`
+
+```cs
+using System.Net.Http;
+using System.Net.Http.Json;
+using WikiBroker.OpenApi.Sdk;
+
+var ApiKey = Guid.Parse("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b");
+var ApiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+var withSign = WikiBrokerOpenApi.CreateDelegatingHandlerConstructor(ApiKey, ApiSecret);
+var client = new HttpClient(withSign(new HttpClientHandler()));
+
+client.PostAsync(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    JsonContent.Create(new { key = "value" })
+);
+```
 
 #### `Dart` 接入（开发中）
 
