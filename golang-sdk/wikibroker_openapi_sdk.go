@@ -1,6 +1,7 @@
 package wikibroker_openapi_sdk
 
 import (
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -55,8 +56,8 @@ func NewHttpClient(raw adapters.RawHttpClient, apiKey, apiSecret string) *adapte
 	return adapters.NewHttpClient(raw, apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString)
 }
 
-func NewRestyRequestMiddleware(apiKey, apiSecret string) resty.RequestMiddleware {
-	return adapters.NewRestyRequestMiddleware(apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString)
+func NewRestyRequestMiddleware(apiKey, apiSecret string, bodyBuilder func(any) (io.ReadCloser, error)) resty.RequestMiddleware {
+	return adapters.NewRestyRequestMiddleware(apiKey, apiSecret, AddXHeaders, Sign, time.Now, uuid.NewString, bodyBuilder)
 }
 
 func GRequestsAuthOption(apiKey, apiSecret string) grequests.Option {
