@@ -1,5 +1,6 @@
 # 编辑器配置
 .vscode/
+.idea/
 
 # 构建产物
 dist/

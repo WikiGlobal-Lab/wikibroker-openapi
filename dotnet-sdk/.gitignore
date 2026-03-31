@@ -1,6 +1,7 @@
 # 编辑器配置
-.idea
+.idea/
 *.DotSettings.user
+.vscode/
 
 # 构建产物
 bin/
