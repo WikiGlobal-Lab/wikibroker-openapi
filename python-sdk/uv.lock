@@ -674,6 +674,7 @@ dev = [
 ]
 test = [
     { name = "pytest" },
+    { name = "yarl" },
 ]
 
 [package.metadata]
@@ -686,7 +687,10 @@ dev = [
     { name = "requests", specifier = ">=2.32.5,<3.0.0" },
     { name = "ruff", specifier = ">=0.14.13,<0.15.0" },
 ]
-test = [{ name = "pytest", specifier = ">=9.0.2,<10.0.0" }]
+test = [
+    { name = "pytest", specifier = ">=9.0.2,<10.0.0" },
+    { name = "yarl", specifier = ">=1.22.0" },
+]
 
 [[package]]
 name = "yarl"
