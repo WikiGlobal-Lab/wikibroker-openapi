@@ -26,7 +26,12 @@ final class ApiTest extends TestCase
     private static $apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
     private static $apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
     private static $nonce = "4428a206-1afd-4b15-a98d-43e91f49a08d";
-    private static $timestamp = 1798115622000;
+    private static $_t = 1798115622000;
+
+    private static function timestamp(): DateTime
+    {
+        return DateTime::createFromFormat('U.v', \sprintf('%d.%03d', intdiv(self::$_t, 1000), self::$_t % 1000));
+    }
     private static $expectedSignature = "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4";
 
     public function testSymfony(): void
@@ -34,11 +39,10 @@ final class ApiTest extends TestCase
         $client = new Psr18Client();
         $body = $client->createStream(json_encode(self::$body));
         $request = $client->createRequest(self::$method, self::url())->withBody($body);
-        $timestamp = DateTime::createFromFormat('U.v', sprintf('%d.%03d', intdiv(self::$timestamp, 1000), self::$timestamp % 1000));
         $request = Api::withXHeaders(
             $request,
             self::$apiKey,
-            $timestamp,
+            self::timestamp(),
             self::$nonce
         );
         $request = Api::withSign($request, self::$apiSecret);
@@ -50,11 +54,10 @@ final class ApiTest extends TestCase
     {
         $body = json_encode(self::$body);
         $request = new Request(self::$method, self::url(), [], $body);
-        $timestamp = DateTime::createFromFormat('U.v', sprintf('%d.%03d', intdiv(self::$timestamp, 1000), self::$timestamp % 1000));
         $request = Api::withXHeaders(
             $request,
             self::$apiKey,
-            $timestamp,
+            self::timestamp(),
             self::$nonce
         );
         $request = Api::withSign($request, self::$apiSecret);
