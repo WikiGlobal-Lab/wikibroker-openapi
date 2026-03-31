@@ -21,16 +21,15 @@ describe("sign", () => {
   const expectedSignature =
     "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4";
 
-  test("native", () => {
+  test("native", async () => {
     const raw = new Request(url, { body: JSON.stringify(body), method });
     const req = loadNative(raw);
     addXHeaders(req.headers, apiKey, timestamp, nonce);
-    sign(req, apiSecret).then(() =>
-      expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature),
-    );
+    await sign(req, apiSecret);
+    expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature);
   });
 
-  test("axios - full url", () => {
+  test("axios - full url", async () => {
     const raw = {
       url,
       headers: new AxiosHeaders(),
@@ -39,12 +38,11 @@ describe("sign", () => {
     };
     const req = loadAxios(raw);
     addXHeaders(req.headers, apiKey, timestamp, nonce);
-    sign(req, apiSecret).then(() =>
-      expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature),
-    );
+    await sign(req, apiSecret);
+    expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature);
   });
 
-  test("axios - relative path", () => {
+  test("axios - relative path", async () => {
     const raw = {
       url: path,
       headers: new AxiosHeaders(),
@@ -53,8 +51,7 @@ describe("sign", () => {
     };
     const req = loadAxios(raw, JSON.stringify);
     addXHeaders(req.headers, apiKey, timestamp, nonce);
-    sign(req, apiSecret).then(() =>
-      expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature),
-    );
+    await sign(req, apiSecret);
+    expect(req.headers.get(CustomHeaders.Signature)).toBe(expectedSignature);
   });
 });
