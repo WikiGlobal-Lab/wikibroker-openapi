@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"wikibroker_openapi_sdk/adapters"
 
 	"net/http"
 	"net/url"
@@ -39,33 +41,64 @@ func TestSign(t *testing.T) {
 	expectedSignature := "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4"
 
 	convey.Convey("native", t, func() {
+		client := adapters.NewHttpClient(
+			&http.Client{Timeout: 1},
+			apiKey,
+			apiSecret,
+			AddXHeaders,
+			Sign,
+			func() time.Time { return timestamp },
+			func() string { return nonce },
+		)
+
 		req, err := http.NewRequest(method, fullUrl, bytes.NewReader(body))
 		assert.Nil(t, err)
-		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
-		assert.Nil(t, Sign(req, apiSecret))
+		client.Do(req)
 		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
 	})
 
 	convey.Convey("resty", t, func() {
 		client := resty.New()
 		defer assert.Nil(t, client.Close())
+		m := adapters.NewRestyRequestMiddleware(
+			apiKey,
+			apiSecret,
+			AddXHeaders,
+			Sign,
+			func() time.Time { return timestamp },
+			func() string { return nonce },
+			func(body any) (io.ReadCloser, error) {
+				data, ok := body.([]byte)
+				if !ok {
+					return nil, fmt.Errorf("body is not []byte")
+				}
+				return io.NopCloser(bytes.NewBuffer(data)), nil
+			},
+		)
+		client.AddRequestMiddleware(m)
+
 		r := client.R().SetBody(body).SetQueryParamsFromValues(query)
 		r.SetTimeout(1).Execute(method, apiUrl)
-		req := r.RawRequest
-		assert.NotNil(t, req)
-		assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
-		assert.Nil(t, Sign(req, apiSecret))
-		assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
+		assert.Equal(t, expectedSignature, r.Header.Get(CustomHeaderSignature.String()))
 	})
 
 	convey.Convey("grequests", t, func() {
+		hook := adapters.NewGRequestsHook(
+			apiKey,
+			apiSecret,
+			AddXHeaders,
+			Sign,
+			func() time.Time { return timestamp },
+			func() string { return nonce },
+		)
+
 		grequests.Request(
 			context.TODO(), method, fullUrl,
 			grequests.RequestBody(bytes.NewReader(body)),
 			grequests.RequestTimeout(1),
 			grequests.BeforeRequest(func(req *http.Request) error {
-				assert.Nil(t, AddXHeaders(req.Header, apiKey, timestamp, nonce))
-				assert.Nil(t, Sign(req, apiSecret))
+				hook(req)
+				assert.Nil(t, hook(req))
 				assert.Equal(t, expectedSignature, req.Header.Get(CustomHeaderSignature.String()))
 				return nil
 			}),
