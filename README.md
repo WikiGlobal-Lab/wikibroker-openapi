@@ -117,12 +117,27 @@ client.Post(
 `resty`
 
 ```golang
-import sdk "wikibroker_openapi_sdk"
+import (
+    "bytes"
+    "encoding/json"
+    "io"
+    sdk "wikibroker_openapi_sdk"
+)
 
 const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
 const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
 client := resty.New()
-m := sdk.NewRestyRequestMiddleware(apiKey, apiSecret)
+m := sdk.NewRestyRequestMiddleware(
+    apiKey,
+    apiSecret,
+    func(body any) (io.ReadCloser, error) {
+        data, err := json.Marshal(body)
+        if err != nil {
+            return nil, err
+        }
+        return io.NopCloser(bytes.NewBuffer(data)), nil
+    },
+)
 client.AddRequestMiddleware(m)
 
 client.R().SetBody(
