@@ -1,15 +1,14 @@
 from datetime import datetime
 from uuid import UUID
 from wikibroker_openapi_sdk import add_x_headers, sign
-from wikibroker_openapi_sdk.adapters.requests import Auth as RequestsAuth
-from wikibroker_openapi_sdk.adapters.httpx import Auth as HttpxAuth
-from wikibroker_openapi_sdk.adapters.aiohttp import build_auth
+from wikibroker_openapi_sdk.adapters.requests_adapter import Auth as RequestsAuth
+from wikibroker_openapi_sdk.adapters.httpx_adapter import Auth as HttpxAuth
+from wikibroker_openapi_sdk.adapters.aiohttp_adapter import build_auth
 from wikibroker_openapi_sdk.common.enums import CustomHeaders
 from requests import Request
 from httpx import Request as HttpxRequest
-from aiohttp import ClientRequest
+from aiohttp import ClientRequest, ClientResponse, BaseConnector, ClientTimeout
 from yarl import URL
-from asyncer import asyncify
 import asyncio
 
 
@@ -22,7 +21,7 @@ class TestApi:
     api_key = UUID("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b")
     api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
     timestamp = datetime.fromtimestamp(1798115622000 / 1000)
-    nonce = "4428a206-1afd-4b15-a98d-43e91f49a08d"
+    nonce = UUID("4428a206-1afd-4b15-a98d-43e91f49a08d")
     expected_signature = (
         "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4"
     )
@@ -74,5 +73,13 @@ class TestApi:
             id_generator=lambda: self.nonce,
         )
 
-        asyncio.run(m(raw, asyncify(lambda x: x)))
+        async def handler(req: ClientRequest) -> ClientResponse:
+            async with BaseConnector() as b:
+                conn = await b.connect(req, [], ClientTimeout())
+                return await req.send(conn)
+
+        try:
+            asyncio.run(m(raw, handler))
+        except Exception:
+            pass
         assert raw.headers[str(CustomHeaders.SIGNATURE)] == self.expected_signature

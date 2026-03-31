@@ -1,12 +1,13 @@
-import httpx
 from typing import Callable
-from ..common.types import Headers, Request
+from requests import PreparedRequest
+from requests.auth import AuthBase
+from wikibroker_openapi_sdk.common.types import Request, Headers
 from uuid import UUID
 from datetime import datetime
 
 
-class HttpxRequest:
-    def __init__(self, raw: httpx.Request):
+class RequestsRequest:
+    def __init__(self, raw: PreparedRequest):
         self._raw = raw
 
     @property
@@ -15,24 +16,26 @@ class HttpxRequest:
 
     @property
     def method(self) -> str:
-        return self._raw.method
+        return self._raw.method or ""
 
     @property
     def url(self) -> str:
-        return str(self._raw.url)
+        return self._raw.url or ""
 
     @property
     def data(self) -> bytes:
-        return self._raw.content
+        if isinstance(self._raw.body, str):
+            return self._raw.body.encode("utf-8")
+        if isinstance(self._raw.body, bytes):
+            return self._raw.body
+        return "".encode("utf-8")
 
 
-def load(raw: httpx.Request) -> Request:
-    return HttpxRequest(raw)
+def load(raw: PreparedRequest) -> Request:
+    return RequestsRequest(raw)
 
 
-class Auth(httpx.Auth):
-    requires_request_body = True
-
+class Auth(AuthBase):
     def __init__(
         self,
         api_key: UUID,
@@ -49,10 +52,10 @@ class Auth(httpx.Auth):
         self.timestamp_generator = timestamp_generator
         self.id_generator = id_generator
 
-    def auth_flow(self, r: httpx.Request):
+    def __call__(self, r: PreparedRequest):
         req = load(r)
         self.load_headers(
             req.headers, self.api_key, self.timestamp_generator(), self.id_generator()
         )
         self.sign(req, self.api_secret)
-        yield r
+        return r

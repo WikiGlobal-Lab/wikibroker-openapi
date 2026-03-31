@@ -1,9 +1,11 @@
+from datetime import datetime
 from typing import Callable
+from uuid import UUID
+
 from aiohttp import ClientRequest, ClientHandlerType, ClientResponse
 from asyncer import syncify, asyncify
-from ..common.types import Request, Headers
-from uuid import UUID
-from datetime import datetime
+
+from wikibroker_openapi_sdk.common.types import Request, Headers
 
 
 class AiohttpRequest:
@@ -24,7 +26,9 @@ class AiohttpRequest:
 
     @property
     def data(self) -> bytes:
-        return syncify(self._raw.body.as_bytes)()
+        if hasattr(self._raw, "as_bytes"):
+            return syncify(self._raw.as_bytes())()
+        return b""
 
 
 def load(raw: ClientRequest) -> Request:

@@ -20,19 +20,19 @@ def sign(req: Request, key: str) -> None:
 
 
 def build_requests_auth(api_key: str, api_secret: str):
-    from .adapters.requests import Auth
+    from .adapters.requests_adapter import Auth
 
     return Auth(UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4)
 
 
 def build_httpx_auth(api_key: str, api_secret: str):
-    from .adapters.httpx import Auth
+    from .adapters.httpx_adapter import Auth
 
     return Auth(UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4)
 
 
 def build_aiohttp_auth(api_key: str, api_secret: str):
-    from .adapters.aiohttp import build_auth
+    from .adapters.aiohttp_adapter import build_auth
 
     return build_auth(
         UUID(api_key), api_secret, add_x_headers, sign, datetime.now, uuid4
