@@ -93,7 +93,7 @@ doc:
 .PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php cloc-cs
 
 cloc:
-	@echo "统计所有SDK代码行数..."; \
+	@echo "统计所有 SDK 核心逻辑代码行数..."; \
 	TS=$$($(MAKE) cloc-js | grep TypeScript | awk '{print $$1 "\t" $$5}'); \
 	GO=$$($(MAKE) cloc-go | grep "Go  " | awk '{print $$1 "\t" $$5}'); \
 	PY=$$($(MAKE) cloc-py | grep "Python  " | awk '{print $$1 "\t" $$5}'); \
@@ -104,25 +104,25 @@ cloc:
 	@echo "所有 SDK 代码行数统计完毕！"
 
 cloc-js:
-	@echo "统计 JavaScript SDK 代码行数..."
-	@cd javascript-sdk && cloc src
+	@echo "统计 JavaScript SDK 核心逻辑代码行数..."
+	@cd javascript-sdk && cloc src/core.ts
 
 cloc-go:
-	@echo "统计 Go SDK 代码行数..."
-	@cd golang-sdk && cloc . --exclude_list_file=wikibroker_openapi_sdk_test.go
+	@echo "统计 Go SDK 核心逻辑代码行数..."
+	@cd golang-sdk && cloc core.go
 
 cloc-py:
-	@echo "统计 Python SDK 代码行数..."
-	@cd python-sdk && cloc src
+	@echo "统计 Python SDK 核心逻辑代码行数..."
+	@cd python-sdk && cloc src/wikibroker_openapi_sdk/core.py
 
 cloc-java:
-	@echo "统计 Java SDK 代码行数..."
-	@cd java-sdk && cloc src/main
+	@echo "统计 Java SDK 核心逻辑代码行数..."
+	@cd java-sdk && cloc src/main/java/com/wikiglobal/wikibroker/openapi/Core.java
 
 cloc-php:
-	@echo "统计 PHP SDK 代码行数..."
-	@cd php-sdk && cloc src
+	@echo "统计 PHP SDK 核心逻辑代码行数..."
+	@cd php-sdk && cloc src/Core.php
 
 cloc-cs:
-	@echo "统计 .NET SDK 代码行数..."
-	@cd dotnet-sdk && cloc src
+	@echo "统计 .NET SDK 核心逻辑代码行数..."
+	@cd dotnet-sdk && cloc src/Core.cs
