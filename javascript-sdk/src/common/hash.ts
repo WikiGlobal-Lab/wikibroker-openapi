@@ -1,4 +1,3 @@
-const encoder = new TextEncoder();
 const hash = "SHA-256";
 const name = "HMAC";
 
