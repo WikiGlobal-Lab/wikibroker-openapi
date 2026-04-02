@@ -35,9 +35,12 @@ String _calculateBodyHash(RequestLike req) {
 
 String _buildCanonicalQuery(RequestLike req) {
   final query = Uri.parse(req.url).queryParametersAll;
-  query.values.forEach((v) => v.sort());
-  final pairs = query.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
-  return pairs
+  var pairs = <String, List<String>>{};
+  query.entries.forEach(
+    (pair) => pairs[pair.key] = List<String>.from(pair.value)..sort(),
+  );
+  var parts = pairs.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+  return parts
       .map((pair) => pair.value.map((v) => '${pair.key}=$v').join('&'))
       .join('&');
 }

@@ -9,7 +9,7 @@ void addXHeaders(
   DateTime timestamp,
   String nonce,
 ) {
-  headers[CustomHeaders.apiKey.value] = Uuid.parse(apiKey).toString();
+  headers[CustomHeaders.apiKey.value] = UuidValue.withValidation(apiKey).uuid;
   headers[CustomHeaders.timestamp.value] = timestamp.millisecondsSinceEpoch
       .toString();
   headers[CustomHeaders.nonce.value] = nonce;
