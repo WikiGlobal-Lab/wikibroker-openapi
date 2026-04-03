@@ -2,10 +2,19 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'package:wikibroker_openapi_sdk/src/common/types.dart';
 
-extension HttpRequest on http.Request {
-  String readBody() {
-    return encoding.decode(bodyBytes);
-  }
+class HttpRequest implements RequestLike {
+  final http.BaseRequest _raw;
+
+  HttpRequest(this._raw);
+
+  HeadersLike get headers => _raw.headers;
+
+  String get method => _raw.method;
+
+  String get url => '${_raw.url.path}?${_raw.url.query}';
+
+  String get data =>
+      _raw is http.Request ? _raw.encoding.decode(_raw.bodyBytes) : '';
 }
 
 class HttpClient extends http.BaseClient {
@@ -29,22 +38,13 @@ class HttpClient extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    this._loadHeaders(
+    _loadHeaders(
       request.headers,
-      this._apiKey.uuid,
-      this._timestampGenerator(),
-      this._idGenerator().uuid,
+      _apiKey.uuid,
+      _timestampGenerator(),
+      _idGenerator().uuid,
     );
-    this._sign(await this._requestInfo(request), this._apiSecret);
+    _sign(HttpRequest(request), _apiSecret);
     return _inner.send(request);
-  }
-
-  Future<RequestLike> _requestInfo(http.BaseRequest request) async {
-    return (
-      headers: request.headers,
-      method: request.method,
-      url: '${request.url.path}?${request.url.query}',
-      data: request is http.Request ? request.readBody() : '',
-    );
   }
 }

@@ -1,8 +1,8 @@
 typedef HeadersLike = Map<String, String?>;
 
-typedef RequestLike = ({
-  HeadersLike headers,
-  String method,
-  String url,
-  String data,
-});
+interface class RequestLike {
+  final HeadersLike headers = {};
+  final String method = '';
+  final String url = '';
+  final String data = '';
+}
