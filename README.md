@@ -506,7 +506,64 @@ client.PostAsync(
 );
 ```
 
-#### `Dart` 接入（开发中）
+#### `Dart` 接入
+
+**安装**
+
+1. 第一步：解压tgz包
+
+    ```bash
+    tar zxf wikibroker-openapi-dart-sdk-0.1.0-alpha.tgz
+    ```
+
+2. 第二步：声明pubspec依赖
+
+    ```yaml
+    dependencies:
+      # ...其它依赖项
+      wikibroker_openapi_sdk:
+        path: ./wikibroker_openapi_sdk
+    ```
+
+**示例**
+
+`http`
+
+```dart
+import 'package:http/http.dart' as http;
+import 'package:wikibroker_openapi_sdk/wikibroker_openapi_sdk.dart';
+
+const apiKey = 'ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b';
+const apiSecret = '4ae4bf20-0afa-4122-ade8-c0beca7bd5e4';
+final client = createHttpClient(http.Client(), apiKey, apiSecret);
+
+client.post(
+  Uri.parse("https://api.example.com/test?q1=c&q2=b&q1=a"),
+  body: {"key": "value"},
+);
+```
+
+`dio`
+
+```dart
+import 'package:dio/dio.dart';
+import 'package:wikibroker_openapi_sdk/wikibroker_openapi_sdk.dart';
+
+const apiKey = 'ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b';
+const apiSecret = '4ae4bf20-0afa-4122-ade8-c0beca7bd5e4';
+final client = Dio();
+final interceptor = createDioRequestInterceptor(
+  apiKey,
+  apiSecret,
+  jsonEncode,
+);
+client.interceptors.add(interceptor);
+
+client.post(
+  "https://api.example.com/test?q1=c&q2=b&q1=a",
+  data: {"key": "value"},
+);
+```
 
 #### `Swift` 接入（开发中）
 
@@ -535,5 +592,5 @@ client.PostAsync(
 | Java SDK | Java 21 |
 | PHP SDK | PHP 8.3 |
 | .NET SDK | C# 12 |
-| Dart SDK | 待定 |
+| Dart SDK | Dart 3.11 |
 | Swift SDK | 待定 |
