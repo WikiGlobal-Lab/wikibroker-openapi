@@ -31,10 +31,6 @@ class RequestsRequest:
         return "".encode("utf-8")
 
 
-def load(raw: PreparedRequest) -> Request:
-    return RequestsRequest(raw)
-
-
 class Auth(AuthBase):
     def __init__(
         self,
@@ -53,7 +49,7 @@ class Auth(AuthBase):
         self.id_generator = id_generator
 
     def __call__(self, r: PreparedRequest):
-        req = load(r)
+        req = RequestsRequest(r)
         self.load_headers(
             req.headers, self.api_key, self.timestamp_generator(), self.id_generator()
         )

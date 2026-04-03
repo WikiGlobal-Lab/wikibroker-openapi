@@ -31,10 +31,6 @@ class AiohttpRequest:
         return b""
 
 
-def load(raw: ClientRequest) -> Request:
-    return AiohttpRequest(raw)
-
-
 def build_auth(
     api_key: UUID,
     api_secret: str,
@@ -46,7 +42,7 @@ def build_auth(
     async def auth_middleware(
         req: ClientRequest, handler: ClientHandlerType
     ) -> ClientResponse:
-        r = load(req)
+        r = AiohttpRequest(req)
         load_headers(r.headers, api_key, timestamp_generator(), id_generator())
         await asyncify(sign)(r, api_secret)
         return await handler(req)

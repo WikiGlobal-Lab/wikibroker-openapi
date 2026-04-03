@@ -26,10 +26,6 @@ class HttpxRequest:
         return self._raw.content
 
 
-def load(raw: httpx.Request) -> Request:
-    return HttpxRequest(raw)
-
-
 class Auth(httpx.Auth):
     requires_request_body = True
 
@@ -50,7 +46,7 @@ class Auth(httpx.Auth):
         self.id_generator = id_generator
 
     def auth_flow(self, request: httpx.Request):
-        req = load(request)
+        req = HttpxRequest(request)
         self.load_headers(
             req.headers, self.api_key, self.timestamp_generator(), self.id_generator()
         )
