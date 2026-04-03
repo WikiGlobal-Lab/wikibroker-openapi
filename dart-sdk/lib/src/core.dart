@@ -11,7 +11,7 @@ String generateSignature(String key, String message) {
 
 String generateCanonicalString(RequestLike req) {
   final method = req.method;
-  final path = Uri.parse(req.url).path;
+  final path = req.url.path;
   final canonicalQuery = _buildCanonicalQuery(req);
   final apiKey = req.headers[CustomHeaders.apiKey.value] ?? '';
   final timestamp = req.headers[CustomHeaders.timestamp.value] ?? '';
@@ -34,7 +34,7 @@ String _calculateBodyHash(RequestLike req) {
 }
 
 String _buildCanonicalQuery(RequestLike req) {
-  final query = Uri.parse(req.url).queryParametersAll;
+  final query = req.url.queryParametersAll;
   var pairs = <String, List<String>>{};
   query.entries.forEach(
     (pair) => pairs[pair.key] = List<String>.from(pair.value)..sort(),

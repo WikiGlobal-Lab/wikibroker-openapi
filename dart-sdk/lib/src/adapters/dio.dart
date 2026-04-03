@@ -12,7 +12,7 @@ class DioRequest implements RequestLike {
 
   String get method => _raw.method;
 
-  String get url => '${_raw.uri.path}?${_raw.uri.query}';
+  Uri get url => _raw.uri;
 
   String get data => _serializer(_raw.data);
 }

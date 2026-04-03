@@ -11,7 +11,7 @@ class HttpRequest implements RequestLike {
 
   String get method => _raw.method;
 
-  String get url => '${_raw.url.path}?${_raw.url.query}';
+  Uri get url => _raw.url;
 
   String get data =>
       _raw is http.Request ? _raw.encoding.decode(_raw.bodyBytes) : '';
