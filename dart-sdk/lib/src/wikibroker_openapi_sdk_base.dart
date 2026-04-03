@@ -9,11 +9,11 @@ import 'package:wikibroker_openapi_sdk/src/core.dart';
 
 void addXHeaders(
   HeadersLike headers,
-  String apiKey,
+  UuidValue apiKey,
   DateTime timestamp,
   String nonce,
 ) {
-  headers[CustomHeaders.apiKey.value] = UuidValue.withValidation(apiKey).uuid;
+  headers[CustomHeaders.apiKey.value] = apiKey.uuid;
   headers[CustomHeaders.timestamp.value] = timestamp.millisecondsSinceEpoch
       .toString();
   headers[CustomHeaders.nonce.value] = nonce;
@@ -25,14 +25,10 @@ void sign(RequestLike req, String key) {
   req.headers[CustomHeaders.signature.value] = signature;
 }
 
-HttpClient createHttpClient(
-  http.Client raw,
-  UuidValue apiKey,
-  String apiSecret,
-) {
+HttpClient createHttpClient(http.Client raw, String apiKey, String apiSecret) {
   return HttpClient(
     raw,
-    apiKey,
+    UuidValue.withValidation(apiKey),
     apiSecret,
     addXHeaders,
     sign,
@@ -42,13 +38,13 @@ HttpClient createHttpClient(
 }
 
 DioRequestInterceptor createDioRequestInterceptor(
-  UuidValue apiKey,
+  String apiKey,
   String apiSecret,
   String Function(dynamic)? serializer,
 ) {
   return DioRequestInterceptor(
     serializer ?? (x) => x as String,
-    apiKey,
+    UuidValue.withValidation(apiKey),
     apiSecret,
     addXHeaders,
     sign,

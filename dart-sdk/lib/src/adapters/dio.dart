@@ -21,8 +21,8 @@ class DioRequestInterceptor extends Interceptor {
   final String Function(dynamic) _serializer;
   final UuidValue _apiKey;
   final String _apiSecret;
-  final void Function(HeadersLike, String, DateTime, String) _loadHeaders;
-  final void Function(RequestLike, String) _sign;
+  final LoadHeaders _loadHeaders;
+  final Sign _sign;
   final DateTime Function() _timestampGenerator;
   final UuidValue Function() _idGenerator;
 
@@ -41,7 +41,7 @@ class DioRequestInterceptor extends Interceptor {
     final proxy = DioRequest(options, _serializer);
     _loadHeaders(
       proxy.headers,
-      _apiKey.uuid,
+      _apiKey,
       _timestampGenerator(),
       _idGenerator().uuid,
     );
