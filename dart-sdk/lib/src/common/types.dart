@@ -1,4 +1,4 @@
-typedef HeadersLike = Map<String, String?>;
+typedef HeadersLike = Map<String, dynamic>;
 
 interface class RequestLike {
   final HeadersLike headers = {};

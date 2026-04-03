@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wikibroker_openapi_sdk/src/adapters/dio.dart';
 import 'package:wikibroker_openapi_sdk/src/adapters/http.dart';
 import 'package:wikibroker_openapi_sdk/wikibroker_openapi_sdk.dart';
 
@@ -28,19 +30,6 @@ void main() {
       // Additional setup goes here.
     });
 
-    // test('Core Test', () {
-    //   final req = (
-    //     headers: <String, String?>{},
-    //     method: method,
-    //     url: url,
-    //     data: jsonEncode(body),
-    //   );
-    //   addXHeaders(req.headers, apiKey.uuid, timestamp, nonce.uuid);
-    //   sign(req, apiSecret);
-    //   final signature = req.headers[CustomHeaders.signature.value];
-    //   expect(signature, expectedSignature);
-    // });
-
     test('http test', () async {
       final client = HttpClient(
         http.Client(),
@@ -59,6 +48,29 @@ void main() {
       expect(signature, expectedSignature);
     });
 
-    test('dio test', () {});
+    test('dio test', () async {
+      final dio = Dio(BaseOptions(connectTimeout: Duration(milliseconds: 1)));
+      final interceptor = DioRequestInterceptor(
+        jsonEncode,
+        apiKey,
+        apiSecret,
+        addXHeaders,
+        sign,
+        () => timestamp,
+        () => nonce,
+      );
+      dio.interceptors.add(interceptor);
+      try {
+        await dio.request(
+          url,
+          options: Options(method: method),
+          data: body,
+        );
+      } on DioException catch (e) {
+        final signature =
+            e.requestOptions.headers[CustomHeaders.signature.value];
+        expect(signature, expectedSignature);
+      }
+    });
   });
 }

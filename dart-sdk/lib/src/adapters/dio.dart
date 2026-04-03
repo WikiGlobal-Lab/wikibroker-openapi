@@ -8,7 +8,7 @@ class DioRequest implements RequestLike {
 
   DioRequest(this._raw, this._serializer);
 
-  HeadersLike get headers => _raw.headers as HeadersLike;
+  HeadersLike get headers => _raw.headers;
 
   String get method => _raw.method;
 
