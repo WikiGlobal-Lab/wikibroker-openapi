@@ -7,12 +7,16 @@ class HttpRequest implements RequestLike {
 
   HttpRequest(this._raw);
 
+  @override
   HeadersLike get headers => _raw.headers;
 
+  @override
   String get method => _raw.method;
 
+  @override
   Uri get url => _raw.url;
 
+  @override
   String get data =>
       _raw is http.Request ? _raw.encoding.decode(_raw.bodyBytes) : '';
 }

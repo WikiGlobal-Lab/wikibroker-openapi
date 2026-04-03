@@ -8,12 +8,16 @@ class DioRequest implements RequestLike {
 
   DioRequest(this._raw, this._serializer);
 
+  @override
   HeadersLike get headers => _raw.headers;
 
+  @override
   String get method => _raw.method;
 
+  @override
   Uri get url => _raw.uri;
 
+  @override
   String get data => _serializer(_raw.data);
 }
 
