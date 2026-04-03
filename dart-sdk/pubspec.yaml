@@ -10,8 +10,8 @@ dependencies:
   uuid: ^4.5.3
   crypto: ^3.0.7
   http: ^1.6.0
+  dio: ^5.9.2
 
 dev_dependencies:
-  dio: ^5.9.2
   lints: ^6.0.0
   test: ^1.25.6

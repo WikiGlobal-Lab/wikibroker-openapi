@@ -1,24 +1,24 @@
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wikibroker_openapi_sdk/src/common/types.dart';
 
-class HttpRequest implements RequestLike {
-  final http.BaseRequest _raw;
+class DioRequest implements RequestLike {
+  final RequestOptions _raw;
+  String Function(dynamic) _serializer;
 
-  HttpRequest(this._raw);
+  DioRequest(this._raw, this._serializer);
 
-  HeadersLike get headers => _raw.headers;
+  HeadersLike get headers => _raw.headers as HeadersLike;
 
   String get method => _raw.method;
 
-  String get url => '${_raw.url.path}?${_raw.url.query}';
+  String get url => '${_raw.uri.path}?${_raw.uri.query}';
 
-  String get data =>
-      _raw is http.Request ? _raw.encoding.decode(_raw.bodyBytes) : '';
+  String get data => _serializer(_raw.data);
 }
 
-class HttpClient extends http.BaseClient {
-  final http.Client _inner;
+class DioRequestInterceptor extends Interceptor {
+  final String Function(dynamic) _serializer;
   final UuidValue _apiKey;
   final String _apiSecret;
   final void Function(HeadersLike, String, DateTime, String) _loadHeaders;
@@ -26,8 +26,8 @@ class HttpClient extends http.BaseClient {
   final DateTime Function() _timestampGenerator;
   final UuidValue Function() _idGenerator;
 
-  HttpClient(
-    this._inner,
+  DioRequestInterceptor(
+    this._serializer,
     this._apiKey,
     this._apiSecret,
     this._loadHeaders,
@@ -37,8 +37,8 @@ class HttpClient extends http.BaseClient {
   );
 
   @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final proxy = HttpRequest(request);
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    final proxy = DioRequest(options, _serializer);
     _loadHeaders(
       proxy.headers,
       _apiKey.uuid,
@@ -46,6 +46,6 @@ class HttpClient extends http.BaseClient {
       _idGenerator().uuid,
     );
     _sign(proxy, _apiSecret);
-    return _inner.send(request);
+    super.onRequest(options, handler);
   }
 }
