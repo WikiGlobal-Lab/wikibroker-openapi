@@ -7,7 +7,7 @@ func addXHeaders(
     nonce: UUID
 ) {
     req.setValue(
-        apiKey.uuidString,
+        apiKey.uuidString.lowercased(),
         forHTTPHeaderField: CustomHeaders.apiKey.rawValue
     )
     req.setValue(
@@ -15,7 +15,7 @@ func addXHeaders(
         forHTTPHeaderField: CustomHeaders.timestamp.rawValue
     )
     req.setValue(
-        nonce.uuidString,
+        nonce.uuidString.lowercased(),
         forHTTPHeaderField: CustomHeaders.nonce.rawValue
     )
 }

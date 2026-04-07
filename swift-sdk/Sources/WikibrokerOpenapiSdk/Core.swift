@@ -9,10 +9,12 @@ func generateCanonicalString(req: URLRequest) -> String {
     let method = req.httpMethod ?? ""
     let path = req.url?.path ?? ""
     let canonicalQuery = buildCanonicalQuery(req: req)
-    let apiKey = req.allHTTPHeaderFields?[CustomHeaders.apiKey.rawValue] ?? ""
+    let apiKey =
+        req.value(forHTTPHeaderField: CustomHeaders.apiKey.rawValue) ?? ""
     let timestamp =
-        req.allHTTPHeaderFields?[CustomHeaders.timestamp.rawValue] ?? ""
-    let nonce = req.allHTTPHeaderFields?[CustomHeaders.nonce.rawValue] ?? ""
+        req.value(forHTTPHeaderField: CustomHeaders.timestamp.rawValue) ?? ""
+    let nonce =
+        req.value(forHTTPHeaderField: CustomHeaders.nonce.rawValue) ?? ""
     let bodyHash = calculateBodyHash(req: req)
     return [
         method,
