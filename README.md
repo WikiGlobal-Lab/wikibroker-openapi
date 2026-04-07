@@ -593,4 +593,4 @@ client.post(
 | PHP SDK | PHP 8.3 |
 | .NET SDK | C# 12 |
 | Dart SDK | Dart 3.11 |
-| Swift SDK | 待定 |
+| Swift SDK | Swift 6.3 |
