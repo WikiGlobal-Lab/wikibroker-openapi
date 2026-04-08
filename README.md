@@ -569,14 +569,56 @@ client.post(
 
 **安装**
 
-```bash
-// TODO
-```
+1. 第一步：解压zip包
+
+    ```bash
+    unzip wikibroker-openapi-swift-sdk-0.1.0-alpha.zip
+    ```
+
+2. 第二步：在XCode中将解压后目录作为项目依赖包添加
 
 **示例**
 
+`URLSession`
+
 ```swift
-// TODO
+import Foundation
+import WikibrokerOpenapiSdk
+
+let apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+let apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+let s = URLSession.shared
+s.setAuth(apiKey: apiKey, apiSecret: apiSecret)
+
+var req = URLRequest(URL("https://api.example.com/test?q1=c&q2=b&q1=a"))
+req.httpMethod = "POST"
+req.httpBody = try JSONSerialization.data(withJSONObject: [
+    "key": "value"
+])
+s.dataWithAuth(for: &req)
+```
+
+`Alamofire`
+
+```swift
+import Alamofire
+import Foundation
+import WikibrokerOpenapiSdk
+
+let apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+let apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+let interceptor = createAlamofireAuthInterceptor(
+    apiKey: apiKey,
+    apiSecret: apiSecret
+)
+let s = Session(interceptor: interceptor)
+
+let resp = s.request(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    method: HTTPMethod(rawValue: "POST"),
+    parameters: ["key": "value"],
+    encoding: JSONEncoding.default
+).response
 ```
 
 ### 通过API接入
