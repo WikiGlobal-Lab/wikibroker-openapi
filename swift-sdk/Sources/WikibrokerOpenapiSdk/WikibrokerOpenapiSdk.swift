@@ -1,3 +1,4 @@
+import Alamofire
 import Foundation
 
 func addXHeaders(
@@ -40,4 +41,17 @@ extension URLSession {
             idGenerator: { UUID() }
         )
     }
+}
+
+func createAlamofireAuthInterceptor(apiKey: String, apiSecret: String)
+    -> RequestInterceptor
+{
+    return AlamofireAuthInterceptor(
+        apiKey: UUID(uuidString: apiKey)!,
+        apiSecret: apiSecret,
+        loadHeaders: addXHeaders,
+        sign: sign,
+        timestampGenerator: { Date() },
+        idGenerator: { UUID() }
+    )
 }

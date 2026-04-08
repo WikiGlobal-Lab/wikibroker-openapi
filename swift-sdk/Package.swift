@@ -16,6 +16,12 @@ let package = Package(
             targets: ["WikibrokerOpenapiSdk"]
         )
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/Alamofire/Alamofire.git",
+            .upToNextMajor(from: "5.11.0")
+        )
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -24,7 +30,10 @@ let package = Package(
         ),
         .testTarget(
             name: "WikibrokerOpenapiSdkTests",
-            dependencies: ["WikibrokerOpenapiSdk"]
+            dependencies: [
+                "WikibrokerOpenapiSdk",
+                .product(name: "Alamofire", package: "Alamofire"),
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]

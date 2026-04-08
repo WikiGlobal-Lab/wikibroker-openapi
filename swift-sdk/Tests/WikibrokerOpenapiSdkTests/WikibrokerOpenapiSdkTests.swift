@@ -44,4 +44,31 @@ struct OpenAPITests {
             ?? ""
         #expect(actualSignature == expectedSignature)
     }
+
+    @Test func testAlamofire() async throws {
+        let c = URLSessionConfiguration.default
+        c.timeoutIntervalForRequest = 0.001
+        let interceptor = AlamofireAuthInterceptor(
+            apiKey: apiKey,
+            apiSecret: apiSecret,
+            loadHeaders: addXHeaders,
+            sign: sign,
+            timestampGenerator: { timestamp },
+            idGenerator: { nonce }
+        )
+        let s = Session(configuration: c, interceptor: interceptor)
+
+        let req = s.request(
+            url,
+            method: HTTPMethod(rawValue: method),
+            parameters: body,
+            encoding: JSONEncoding.default
+        ).resume()
+        try await Task.sleep(for: .seconds(c.timeoutIntervalForRequest))
+        let actualSignature =
+            req.request!.value(
+                forHTTPHeaderField: CustomHeaders.signature.rawValue
+            ) ?? ""
+        #expect(actualSignature == expectedSignature)
+    }
 }
