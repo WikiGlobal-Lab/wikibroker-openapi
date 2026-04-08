@@ -27,13 +27,14 @@ build:
 	@echo ""
 	@echo "开始构建所有 SDK ..."
 	@echo ""
-	@echo "[1/7] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/7] JavaScript SDK 构建完成 ✓"
-	@echo "[2/7] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/7] Go SDK 构建完成 ✓"
-	@echo "[3/7] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/7] Python SDK 构建完成 ✓"
-	@echo "[4/7] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/7] Java SDK 构建完成 ✓"
-	@echo "[5/7] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/7] PHP SDK 构建完成 ✓"
-	@echo "[6/7] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/7] .NET SDK 构建完成 ✓"
-	@echo "[7/7] 开始构建 Dart SDK..." && $(MAKE) build-dart && echo "[7/7] Dart SDK 构建完成 ✓"
+	@echo "[1/8] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/8] JavaScript SDK 构建完成 ✓"
+	@echo "[2/8] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/8] Go SDK 构建完成 ✓"
+	@echo "[3/8] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/8] Python SDK 构建完成 ✓"
+	@echo "[4/8] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/8] Java SDK 构建完成 ✓"
+	@echo "[5/8] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/8] PHP SDK 构建完成 ✓"
+	@echo "[6/8] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/8] .NET SDK 构建完成 ✓"
+	@echo "[7/8] 开始构建 Dart SDK..." && $(MAKE) build-dart && echo "[7/8] Dart SDK 构建完成 ✓"
+	@echo "[8/8] 开始构建 Swift SDK..." && $(MAKE) build-sw && echo "[8/8] Swift SDK 构建完成 ✓"
 	@echo ""
 	@echo "所有SDK构建成功！"
 
@@ -57,6 +58,11 @@ build-php: init-php
 build-cs:
 	@cd dotnet-sdk/src && rm -rf bin/ obj/ && dotnet pack && mv bin/Release/WikiBroker*.nupkg ../..
 
+SWIFT_SDK_VERSION = 0.1.0-alpha
+
+build-sw:
+	@cd swift-sdk && cp -r . WikibrokerOpenapiSdk && swift package archive-source --package-path=WikibrokerOpenapiSdk && zip -d WikibrokerOpenapiSdk/WikibrokerOpenapiSdk.zip "WikibrokerOpenapiSdk/.*/*" && mv WikibrokerOpenapiSdk/WikibrokerOpenapiSdk.zip ../wikibroker-openapi-swift-sdk-$(SWIFT_SDK_VERSION).zip && rm -rf WikibrokerOpenapiSdk/
+
 DART_SDK_VERSION := $(shell yq '.version' dart-sdk/pubspec.yaml)
 
 build-dart:
@@ -66,13 +72,14 @@ build-dart:
 
 test:
 	@echo "运行所有 SDK 测试..."
-	@echo "[1/7] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/7] JavaScript SDK 测试通过 ✓"
-	@echo "[2/7] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/7] Go SDK 测试通过 ✓"
-	@echo "[3/7] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/7] Python SDK 测试通过 ✓"
-	@echo "[4/7] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/7] Java SDK 测试通过 ✓"
-	@echo "[5/7] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/7] PHP SDK 测试通过 ✓"
-	@echo "[6/7] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/7] .NET SDK 测试通过 ✓"
-	@echo "[7/7] 运行 Dart SDK 测试..." && $(MAKE) test-dart && echo "[7/7] Dart SDK 测试通过 ✓"
+	@echo "[1/8] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/8] JavaScript SDK 测试通过 ✓"
+	@echo "[2/8] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/8] Go SDK 测试通过 ✓"
+	@echo "[3/8] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/8] Python SDK 测试通过 ✓"
+	@echo "[4/8] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/8] Java SDK 测试通过 ✓"
+	@echo "[5/8] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/8] PHP SDK 测试通过 ✓"
+	@echo "[6/8] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/8] .NET SDK 测试通过 ✓"
+	@echo "[7/8] 运行 Dart SDK 测试..." && $(MAKE) test-dart && echo "[7/8] Dart SDK 测试通过 ✓"
+	@echo "[8/8] 运行 Swift SDK 测试..." && $(MAKE) test-sw && echo "[8/8] Swift SDK 测试通过 ✓"
 	@echo "所有 SDK 测试完成！"
 
 test-js: init-js
@@ -96,6 +103,9 @@ test-cs:
 test-dart: init-dart
 	@cd dart-sdk && dart test
 
+test-sw:
+	@cd swift-sdk && swift test
+
 .PHONY: doc
 
 doc:
@@ -114,7 +124,8 @@ cloc:
 	PHP=$$($(MAKE) cloc-php | grep "PHP  " | awk '{print $$1 "\t" $$5}'); \
 	CS=$$($(MAKE) cloc-cs | grep "C#  " | awk '{print $$1 "\t" $$5}'); \
 	DART=$$($(MAKE) cloc-dart | grep "Dart  " | awk '{print $$1 "\t" $$5}'); \
-	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS $$DART
+	SW=$$($(MAKE) cloc-sw | grep "Swift  " | awk '{print $$1 "\t" $$5}'); \
+	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS $$DART $$SW
 	@echo "所有 SDK 代码行数统计完毕！"
 
 cloc-js:
@@ -144,3 +155,7 @@ cloc-cs:
 cloc-dart:
 	@echo "统计 Dart SDK 核心逻辑代码行数..."
 	@cd dart-sdk && cloc lib/src/core.dart
+
+cloc-sw:
+	@echo "统计 Swift SDK 核心逻辑代码行数..."
+	@cd swift-sdk && cloc Sources/WikibrokerOpenapiSdk/Core.swift
