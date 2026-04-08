@@ -1,3 +1,4 @@
+import Alamofire
 import Foundation
 import Testing
 
@@ -19,17 +20,25 @@ struct OpenAPITests {
     let expectedSignature =
         "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4"
 
-    @Test func testSign() async throws {
+    @Test func testNative() async throws {
+        let c = URLSessionConfiguration.default
+        c.timeoutIntervalForRequest = 0.001
+        let s = URLSession(configuration: c)
+        s.setAuth(
+            apiKey: apiKey,
+            apiSecret: apiSecret,
+            loadHeaders: addXHeaders,
+            sign: sign,
+            timestampGenerator: { timestamp },
+            idGenerator: { nonce }
+        )
+
         var req = URLRequest(url: url)
         req.httpMethod = method
         req.httpBody = try JSONSerialization.data(withJSONObject: body)
-        addXHeaders(
-            req: &req,
-            apiKey: apiKey,
-            timestamp: timestamp,
-            nonce: nonce
-        )
-        sign(req: &req, key: apiSecret)
+        do {
+            try await s.dataWithAuth(for: &req)
+        } catch {}
         let actualSignature =
             req.value(forHTTPHeaderField: CustomHeaders.signature.rawValue)
             ?? ""

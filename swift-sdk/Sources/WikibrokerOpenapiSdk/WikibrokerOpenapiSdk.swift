@@ -28,3 +28,16 @@ func sign(req: inout URLRequest, key: String) {
         forHTTPHeaderField: CustomHeaders.signature.rawValue
     )
 }
+
+extension URLSession {
+    public func setAuth(apiKey: String, apiSecret: String) {
+        self.setAuth(
+            apiKey: UUID(uuidString: apiKey)!,
+            apiSecret: apiSecret,
+            loadHeaders: addXHeaders,
+            sign: sign,
+            timestampGenerator: { Date() },
+            idGenerator: { UUID() }
+        )
+    }
+}
