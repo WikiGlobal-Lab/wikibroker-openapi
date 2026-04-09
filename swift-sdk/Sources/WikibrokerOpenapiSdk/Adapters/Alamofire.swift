@@ -1,7 +1,7 @@
 import Alamofire
 import Foundation
 
-final class AlamofireAuthInterceptor: RequestInterceptor {
+public final class AlamofireAuthInterceptor: RequestInterceptor {
     private let apiKey: UUID
     private let apiSecret: String
     private let loadHeaders:
@@ -27,7 +27,7 @@ final class AlamofireAuthInterceptor: RequestInterceptor {
         self.idGenerator = idGenerator
     }
 
-    func adapt(
+    public func adapt(
         _ urlRequest: URLRequest,
         for session: Session,
         completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void
@@ -38,7 +38,7 @@ final class AlamofireAuthInterceptor: RequestInterceptor {
         completion(.success(req))
     }
 
-    func adapt(
+    public func adapt(
         _ urlRequest: URLRequest,
         using state: RequestAdapterState,
         completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void

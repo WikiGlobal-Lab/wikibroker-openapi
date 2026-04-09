@@ -1,7 +1,7 @@
 import Alamofire
 import Foundation
 
-func addXHeaders(
+public func addXHeaders(
     req: inout URLRequest,
     apiKey: UUID,
     timestamp: Date,
@@ -21,7 +21,7 @@ func addXHeaders(
     )
 }
 
-func sign(req: inout URLRequest, key: String) {
+public func sign(req: inout URLRequest, key: String) {
     let canonicalString = generateCanonicalString(req: req)
     let signature = generateSignature(key: key, message: canonicalString)
     req.setValue(
@@ -43,7 +43,7 @@ extension URLSession {
     }
 }
 
-func createAlamofireAuthInterceptor(apiKey: String, apiSecret: String)
+public func createAlamofireAuthInterceptor(apiKey: String, apiSecret: String)
     -> RequestInterceptor
 {
     return AlamofireAuthInterceptor(
