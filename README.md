@@ -607,7 +607,7 @@ import WikibrokerOpenapiSdk
 
 let apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
 let apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
-let interceptor = createAlamofireAuthInterceptor(
+let interceptor = makeAlamofireAuthInterceptor(
     apiKey: apiKey,
     apiSecret: apiSecret
 )

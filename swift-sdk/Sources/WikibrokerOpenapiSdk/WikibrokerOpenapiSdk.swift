@@ -43,7 +43,7 @@ extension URLSession {
     }
 }
 
-public func createAlamofireAuthInterceptor(apiKey: String, apiSecret: String)
+public func makeAlamofireAuthInterceptor(apiKey: String, apiSecret: String)
     -> RequestInterceptor
 {
     return AlamofireAuthInterceptor(
